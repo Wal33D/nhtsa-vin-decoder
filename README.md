@@ -2,12 +2,12 @@
 
 Official NHTSA vPIC API wrapper for decoding Vehicle Identification Numbers
 
-Author: Wal33D
-Email: aquataze@yahoo.com
+**Author**: Wal33D
+**Email**: aquataze@yahoo.com
 
-## What is this?
+## Overview
 
-This is the **real** VIN decoder - uses the official US government NHTSA (National Highway Traffic Safety Administration) API to get comprehensive vehicle data. Not just manufacturer mappings, but EVERYTHING about the vehicle.
+Comprehensive VIN decoder using the official US government NHTSA (National Highway Traffic Safety Administration) vPIC API. Returns complete vehicle specifications, not just manufacturer mappings.
 
 ## Features
 
@@ -15,8 +15,22 @@ This is the **real** VIN decoder - uses the official US government NHTSA (Nation
 - **FREE** - No API key required
 - **Comprehensive Data** - Make, model, year, engine, transmission, safety ratings
 - **Always Current** - Database updated by NHTSA
-- **Caching** - Reduces API calls
-- **Multi-platform** - Java (Android), Python, JavaScript
+- **Caching** - Built-in LRU cache to reduce API calls
+- **Multi-platform** - Java/Android and Python implementations
+
+## Directory Structure
+
+```
+nhtsa-vin-decoder/
+├── java/                 # Java/Android implementation
+│   ├── VINDecoderService.java
+│   ├── VehicleData.java
+│   ├── NHTSAApiService.java
+│   └── Response classes
+├── python/               # Python implementation
+│   └── nhtsa_vin_decoder.py
+└── docs/                 # Documentation
+```
 
 ## What You Get
 
@@ -79,20 +93,17 @@ decoder.decodeVIN("1HGCM82633A004352", new VINDecoderCallback() {
 ## Installation
 
 ### Python
-```bash
-pip install nhtsa-vin-decoder
-# Or from source
-cd python && pip install -r requirements.txt
+```python
+# No external dependencies required - uses urllib
+from python.nhtsa_vin_decoder import NHTSAVinDecoder
 ```
 
 ### Java/Android
-Add to your `build.gradle`:
-```gradle
-dependencies {
-    implementation 'com.wal33d:nhtsa-vin-decoder:1.0.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-}
+```java
+// Copy java/*.java files to your project
+// Requires Retrofit for Android:
+implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 ```
 
 ## API Endpoints Used
@@ -132,21 +143,19 @@ dependencies {
 | Free | ✓ | ✓ |
 | Offline | ✗ | ✓ |
 
-## Integration with DTC Database
-
-Perfect companion for our DTC database:
+## Example Use Cases
 
 ```python
-# Step 1: Get manufacturer from NHTSA
-from nhtsa_vin_decoder import NHTSAVinDecoder
+# Get full vehicle information from VIN
+from python.nhtsa_vin_decoder import NHTSAVinDecoder
 decoder = NHTSAVinDecoder()
-vehicle = decoder.decode(vin)
-manufacturer = vehicle.manufacturer  # e.g., "Mercedes-Benz AG"
+vehicle = decoder.decode("1HGCM82633A004352")
 
-# Step 2: Use with DTC database
-from dtc_database import DTCDatabase
-dtc_db = DTCDatabase()
-dtc = dtc_db.get_smart("P0171", manufacturer=manufacturer)
+# Access vehicle details
+print(f"Manufacturer: {vehicle.manufacturer}")
+print(f"Model: {vehicle.model} {vehicle.trim}")
+print(f"Engine: {vehicle.engine_cylinders}cyl {vehicle.engine_displacement_l}L")
+print(f"Fuel Type: {vehicle.fuel_type}")
 ```
 
 ## Limitations
@@ -161,12 +170,11 @@ Found an issue? Create a GitHub issue or PR.
 
 ## License
 
-MIT - Use freely
+MIT License - Free for commercial and non-commercial use
 
-## Related Projects
+## Contact
 
-- [dtc-database](https://github.com/Wal33D/dtc-database) - 18,821 DTC codes
-- [OBD-Droid](https://github.com/Wal33D/OBD-Droid) - Android OBD app
+Wal33D - aquataze@yahoo.com
 
 ## Credits
 
