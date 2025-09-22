@@ -1,22 +1,25 @@
 # NHTSA VIN Decoder
 
-Official NHTSA vPIC API wrapper for decoding Vehicle Identification Numbers
+Official NHTSA vPIC API wrapper with offline WMI database fallback for decoding Vehicle Identification Numbers
 
 **Author**: Wal33D
 **Email**: aquataze@yahoo.com
 
 ## Overview
 
-Comprehensive VIN decoder using the official US government NHTSA (National Highway Traffic Safety Administration) vPIC API. Returns complete vehicle specifications, not just manufacturer mappings.
+Comprehensive VIN decoder using the official US government NHTSA (National Highway Traffic Safety Administration) vPIC API with integrated offline WMI (World Manufacturer Identifier) database for fallback support. Returns complete vehicle specifications, not just manufacturer mappings.
 
 ## Features
 
 - **Official Government API** - NHTSA vPIC database
+- **Offline WMI Database** - 2000+ manufacturer codes for basic decoding without internet
+- **Automatic Fallback** - Seamlessly switches to offline mode when API is unavailable
 - **FREE** - No API key required
 - **Comprehensive Data** - Make, model, year, engine, transmission, safety ratings
 - **Always Current** - Database updated by NHTSA
 - **Caching** - Built-in LRU cache to reduce API calls
 - **Multi-platform** - Java/Android and Python implementations
+- **Zero Dependencies** - Python version uses standard library only
 
 ## Directory Structure
 
@@ -28,8 +31,13 @@ nhtsa-vin-decoder/
 │   ├── NHTSAApiService.java
 │   └── Response classes
 ├── python/               # Python implementation
-│   └── nhtsa_vin_decoder.py
+│   ├── nhtsa_vin_decoder.py    # Main decoder with API integration
+│   └── wmi_database.py         # Offline WMI database (2000+ codes)
 └── docs/                 # Documentation
+    ├── API.md            # Complete API reference
+    ├── WMI_DATABASE.md   # WMI database details
+    ├── USAGE.md          # Examples and best practices
+    └── INSTALLATION.md   # Setup guide
 ```
 
 ## What You Get
@@ -58,18 +66,30 @@ nhtsa-vin-decoder/
 
 ## Quick Start
 
-### Python
+### Python - Online Mode (Full NHTSA Data)
 ```python
-from nhtsa_vin_decoder import NHTSAVinDecoder
+from python.nhtsa_vin_decoder import NHTSAVinDecoder
 
 decoder = NHTSAVinDecoder()
 vehicle = decoder.decode("1HGCM82633A004352")
 
-print(f"Vehicle: {vehicle.get_display_name()}")
-# Output: 2003 Honda Accord EX
+print(f"Vehicle: {vehicle.year} {vehicle.make} {vehicle.model}")
+# Output: Vehicle: 2003 HONDA Accord
 
-print(f"Engine: {vehicle.engine_cylinders}cyl {vehicle.engine_displacement_l}L")
-# Output: Engine: 4cyl 2.4L
+print(f"Body: {vehicle.body_class}, {vehicle.doors} doors")
+# Output: Body: Coupe, 2 doors
+```
+
+### Python - Offline Mode (WMI Database)
+```python
+# Works without internet connection
+vehicle = decoder.decode_offline("WBA5B3C50GG252337")
+
+print(f"Manufacturer: {vehicle.manufacturer}")
+# Output: Manufacturer: BMW
+
+print(f"Country: {vehicle.plant_country}, Year: {vehicle.year}")
+# Output: Country: Germany, Year: 2016
 ```
 
 ### Java (Android)
@@ -130,18 +150,19 @@ implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
 ## Comparison
 
-| Feature | NHTSA API | Static WMI Mapping |
-|---------|-----------|-------------------|
-| Manufacturer | ✓ | ✓ |
-| Make/Model | ✓ | ✗ |
-| Year | ✓ | Partial |
-| Engine Details | ✓ | ✗ |
-| Transmission | ✓ | ✗ |
-| Body Style | ✓ | ✗ |
-| Plant Location | ✓ | ✗ |
-| Safety Data | ✓ | ✗ |
-| Free | ✓ | ✓ |
-| Offline | ✗ | ✓ |
+| Feature | NHTSA API | WMI Database (This Library) | Static WMI Only |
+|---------|-----------|---------------------------|----------------|
+| Manufacturer | ✓ | ✓ | ✓ |
+| Make/Model | ✓ | ✓ (Make only) | ✗ |
+| Year | ✓ | ✓ (2001-2030) | Partial |
+| Country | ✓ | ✓ | ✓ |
+| Engine Details | ✓ | ✗ | ✗ |
+| Transmission | ✓ | ✗ | ✗ |
+| Body Style | ✓ | ✗ | ✗ |
+| Safety Data | ✓ | ✗ | ✗ |
+| Works Offline | ✗ | ✓ | ✓ |
+| Auto Fallback | N/A | ✓ | ✗ |
+| Free | ✓ | ✓ | ✓ |
 
 ## Example Use Cases
 
@@ -158,11 +179,30 @@ print(f"Engine: {vehicle.engine_cylinders}cyl {vehicle.engine_displacement_l}L")
 print(f"Fuel Type: {vehicle.fuel_type}")
 ```
 
+## Documentation
+
+Comprehensive documentation is available in the [docs/](docs/) directory:
+
+- [Installation Guide](docs/INSTALLATION.md) - Setup and configuration
+- [API Reference](docs/API.md) - Complete API documentation
+- [Usage Examples](docs/USAGE.md) - Code examples and best practices
+- [WMI Database](docs/WMI_DATABASE.md) - Offline database details
+
+## Supported Manufacturers (Offline WMI)
+
+The offline WMI database includes 2000+ manufacturer codes:
+
+- **American**: Ford, GM, Chrysler, Tesla, Rivian, Lucid
+- **European**: BMW, Mercedes-Benz, Volkswagen, Audi, Porsche, Ferrari, Lamborghini
+- **Japanese**: Toyota, Honda, Nissan, Mazda, Subaru, Mitsubishi
+- **Korean**: Hyundai, Kia, Genesis
+- **And many more...**
+
 ## Limitations
 
-- **Internet Required** - API calls need network
+- **API Mode** - Requires internet connection
 - **Rate Limits** - Be respectful, use caching
-- **US-Focused** - Best for North American vehicles
+- **Offline Mode** - Basic info only (manufacturer, year, country)
 
 ## Contributing
 
