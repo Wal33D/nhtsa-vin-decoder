@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-NHTSA VIN Decoder - Official Government API
+NHTSA VIN Decoder - Official Government API with WMI Fallback
 Free, comprehensive vehicle data from National Highway Traffic Safety Administration
+Includes offline WMI database for basic manufacturer identification
 
 Author: Wal33D
 Email: aquataze@yahoo.com
@@ -13,6 +14,13 @@ import json
 from typing import Dict, Optional, Callable
 from dataclasses import dataclass
 from functools import lru_cache
+
+# Import WMI database for offline fallback
+try:
+    from wmi_database import WMIDatabase
+    wmi_available = True
+except ImportError:
+    wmi_available = False
 
 
 @dataclass
@@ -144,14 +152,82 @@ class NHTSAVinDecoder:
             else:
                 return VehicleData(vin=vin, error_text="No data returned from NHTSA")
 
-        except urllib.error.URLError as e:
-            if hasattr(e, 'reason') and 'timed out' in str(e.reason):
-                return VehicleData(vin=vin, error_text="Request timed out")
-            return VehicleData(vin=vin, error_text=f"Network error: {str(e)}")
-        except json.JSONDecodeError:
-            return VehicleData(vin=vin, error_text="Invalid response from NHTSA")
-        except Exception as e:
-            return VehicleData(vin=vin, error_text=f"Unexpected error: {str(e)}")
+        except (urllib.error.URLError, json.JSONDecodeError, Exception) as e:
+            # API failed, try WMI fallback if available
+            if wmi_available:
+                return self._wmi_fallback(vin, str(e))
+
+            # No fallback available, return error
+            if isinstance(e, urllib.error.URLError):
+                if hasattr(e, 'reason') and 'timed out' in str(e.reason):
+                    return VehicleData(vin=vin, error_text="Request timed out")
+                return VehicleData(vin=vin, error_text=f"Network error: {str(e)}")
+            elif isinstance(e, json.JSONDecodeError):
+                return VehicleData(vin=vin, error_text="Invalid response from NHTSA")
+            else:
+                return VehicleData(vin=vin, error_text=f"Unexpected error: {str(e)}")
+
+    def _wmi_fallback(self, vin: str, api_error: str) -> VehicleData:
+        """
+        Use WMI database for basic manufacturer identification when API fails
+
+        Args:
+            vin: Vehicle Identification Number
+            api_error: Original API error message
+
+        Returns:
+            VehicleData with basic WMI information
+        """
+        if not wmi_available or len(vin) < 3:
+            return VehicleData(vin=vin, error_text=f"API failed: {api_error}")
+
+        # Get basic info from WMI database
+        manufacturer = WMIDatabase.get_manufacturer(vin)
+        country = WMIDatabase.get_country(vin)
+        year = WMIDatabase.get_year(vin) if len(vin) >= 10 else None
+
+        # Return basic vehicle data with WMI fallback
+        return VehicleData(
+            vin=vin,
+            manufacturer=manufacturer,
+            make=manufacturer,
+            year=year,
+            plant_country=country,
+            error_text=f"Using WMI fallback (API: {api_error})",
+            raw_data={'source': 'WMI_FALLBACK', 'wmi': vin[:3], 'api_error': api_error}
+        )
+
+    def decode_offline(self, vin: str) -> VehicleData:
+        """
+        Decode VIN using only offline WMI database (no API call)
+
+        Args:
+            vin: Vehicle Identification Number
+
+        Returns:
+            VehicleData with basic WMI information only
+        """
+        if not wmi_available:
+            return VehicleData(vin=vin, error_text="WMI database not available")
+
+        if not vin or len(vin) < 3:
+            return VehicleData(vin=vin or "", error_text="VIN too short for WMI lookup")
+
+        vin = vin.strip().upper()
+
+        # Get basic info from WMI database
+        manufacturer = WMIDatabase.get_manufacturer(vin)
+        country = WMIDatabase.get_country(vin)
+        year = WMIDatabase.get_year(vin) if len(vin) >= 10 else None
+
+        return VehicleData(
+            vin=vin,
+            manufacturer=manufacturer,
+            make=manufacturer,
+            year=year,
+            plant_country=country,
+            raw_data={'source': 'WMI_DATABASE', 'wmi': vin[:3] if len(vin) >= 3 else None}
+        )
 
     def decode_async(self, vin: str, callback: Callable[[VehicleData], None],
                      model_year: Optional[str] = None) -> None:
