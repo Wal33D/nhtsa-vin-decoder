@@ -1,6 +1,7 @@
 package com.obddroid.api.nhtsa;
 
 import com.google.gson.annotations.SerializedName;
+import java.util.List;
 
 /**
  * Vehicle data model containing all decoded VIN information from NHTSA API
@@ -20,6 +21,9 @@ public class VehicleData {
     @SerializedName("Manufacturer")
     public String manufacturer;
 
+    @SerializedName("ManufacturerName")
+    public String manufacturerName;
+
     @SerializedName("Model")
     public String model;
 
@@ -35,8 +39,28 @@ public class VehicleData {
     @SerializedName("PlantState")
     public String plantState;
 
+    @SerializedName("PlantCode")
+    public String plantCode;
+
     @SerializedName("VehicleType")
     public String vehicleType;
+
+    // VIN Structure Information
+    @SerializedName("WMI")
+    public String wmi;
+
+    @SerializedName("VDS")
+    public String vds;
+
+    @SerializedName("VIS")
+    public String vis;
+
+    @SerializedName("SequentialNumber")
+    public String sequentialNumber;
+
+    // Region Information
+    @SerializedName("Region")
+    public String region;
 
     // Body and Structure
     @SerializedName("BodyClass")
@@ -147,6 +171,22 @@ public class VehicleData {
     @SerializedName("Note")
     public String note;
 
+    // API Response Metadata
+    @SerializedName("Count")
+    public Integer count;
+
+    @SerializedName("Message")
+    public String message;
+
+    @SerializedName("SearchCriteria")
+    public String searchCriteria;
+
+    @SerializedName("Results")
+    public List<Result> results;
+
+    // Validation status
+    public boolean valid;
+
     // Error Information
     @SerializedName("ErrorCode")
     public String errorCode;
@@ -156,6 +196,29 @@ public class VehicleData {
 
     @SerializedName("SuggestedVIN")
     public String suggestedVIN;
+
+    /**
+     * Result class for API response
+     */
+    public static class Result {
+        @SerializedName("Value")
+        public String value;
+
+        @SerializedName("Variable")
+        public String variable;
+
+        @SerializedName("VariableId")
+        public String variableId;
+
+        public String getValue() { return value; }
+        public void setValue(String value) { this.value = value; }
+
+        public String getVariable() { return variable; }
+        public void setVariable(String variable) { this.variable = variable; }
+
+        public String getVariableId() { return variableId; }
+        public void setVariableId(String variableId) { this.variableId = variableId; }
+    }
 
     /**
      * Get a formatted display string for the vehicle
@@ -213,8 +276,73 @@ public class VehicleData {
      * @return true if essential fields are present
      */
     public boolean isValid() {
-        return vin != null && !vin.isEmpty()
+        return valid || (vin != null && !vin.isEmpty()
                 && (make != null || manufacturer != null)
-                && errorCode != null && errorCode.equals("0");
+                && errorCode != null && errorCode.equals("0"));
     }
+
+    // Getter/Setter methods for compatibility
+
+    public String getVin() { return vin; }
+    public void setVin(String vin) { this.vin = vin; }
+
+    public String getMake() { return make; }
+    public void setMake(String make) { this.make = make; }
+
+    public String getManufacturer() { return manufacturer; }
+    public void setManufacturer(String manufacturer) { this.manufacturer = manufacturer; }
+
+    public String getManufacturerName() { return manufacturerName; }
+    public void setManufacturerName(String name) { this.manufacturerName = name; }
+
+    public String getModel() { return model; }
+    public void setModel(String model) { this.model = model; }
+
+    public String getModelYear() { return modelYear; }
+    public void setModelYear(String modelYear) { this.modelYear = modelYear; }
+
+    public String getPlantCity() { return plantCity; }
+    public void setPlantCity(String plantCity) { this.plantCity = plantCity; }
+
+    public String getPlantCountry() { return plantCountry; }
+    public void setPlantCountry(String plantCountry) { this.plantCountry = plantCountry; }
+
+    public String getPlantCode() { return plantCode; }
+    public void setPlantCode(String plantCode) { this.plantCode = plantCode; }
+
+    public String getVehicleType() { return vehicleType; }
+    public void setVehicleType(String vehicleType) { this.vehicleType = vehicleType; }
+
+    public String getWmi() { return wmi; }
+    public void setWmi(String wmi) { this.wmi = wmi; }
+
+    public String getVds() { return vds; }
+    public void setVds(String vds) { this.vds = vds; }
+
+    public String getVis() { return vis; }
+    public void setVis(String vis) { this.vis = vis; }
+
+    public String getSequentialNumber() { return sequentialNumber; }
+    public void setSequentialNumber(String sequentialNumber) { this.sequentialNumber = sequentialNumber; }
+
+    public String getRegion() { return region; }
+    public void setRegion(String region) { this.region = region; }
+
+    public String getErrorCode() { return errorCode; }
+    public void setErrorCode(String errorCode) { this.errorCode = errorCode; }
+
+    public String getErrorText() { return errorText; }
+    public void setErrorText(String errorText) { this.errorText = errorText; }
+
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+
+    public Integer getCount() { return count; }
+    public void setCount(Integer count) { this.count = count; }
+
+    public List<Result> getResults() { return results; }
+    public void setResults(List<Result> results) { this.results = results; }
+
+    public boolean isValid(boolean valid) { return this.valid; }
+    public void setValid(boolean valid) { this.valid = valid; }
 }
