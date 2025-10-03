@@ -647,20 +647,24 @@ class WMIDatabase:
         'YWY': 'Volvo', 'YWZ': 'Volvo',
     }
 
-    # Region codes (first character)
+    # Region codes (first character) mapped to geographic regions
     REGION_MAP = {
-        '1': 'United States', '2': 'Canada', '3': 'Mexico',
-        '4': 'United States', '5': 'United States',
-        '6': 'Australia', '7': 'New Zealand',
-        '8': 'Argentina', '9': 'Brazil',
-        'A': 'South Africa', 'B': 'United Kingdom', 'C': 'China',
-        'D': 'Germany', 'E': 'Spain', 'F': 'France',
-        'G': 'United Kingdom', 'H': 'Hungary', 'J': 'Japan',
-        'K': 'Korea', 'L': 'China', 'M': 'India',
-        'N': 'Turkey', 'P': 'Philippines', 'R': 'Taiwan',
-        'S': 'United Kingdom', 'T': 'Switzerland', 'U': 'Romania',
-        'V': 'France', 'W': 'Germany', 'X': 'Russia',
-        'Y': 'Sweden', 'Z': 'Italy'
+        # North America
+        '1': 'North America', '2': 'North America', '3': 'North America',
+        '4': 'North America', '5': 'North America',
+        # Oceania
+        '6': 'Oceania', '7': 'Oceania',
+        # South America
+        '8': 'South America', '9': 'South America',
+        # Africa (A-H)
+        'A': 'Africa', 'B': 'Africa', 'C': 'Africa', 'D': 'Africa',
+        'E': 'Africa', 'F': 'Africa', 'G': 'Africa', 'H': 'Africa',
+        # Asia (J-R)
+        'J': 'Asia', 'K': 'Asia', 'L': 'Asia', 'M': 'Asia', 'N': 'Asia',
+        'P': 'Asia', 'R': 'Asia',
+        # Europe (S-Z)
+        'S': 'Europe', 'T': 'Europe', 'U': 'Europe', 'V': 'Europe',
+        'W': 'Europe', 'X': 'Europe', 'Y': 'Europe', 'Z': 'Europe',
     }
 
     @classmethod
@@ -674,7 +678,7 @@ class WMIDatabase:
 
     @classmethod
     def get_country(cls, vin: str) -> str:
-        """Get country from VIN first character"""
+        """Get region from VIN first character"""
         if not vin:
             return None
 
@@ -682,23 +686,35 @@ class WMIDatabase:
 
     @classmethod
     def get_year(cls, vin: str) -> int:
-        """Estimate year from VIN (10th character) - basic approximation"""
+        """Estimate model year from VIN position 10 using ISO 3779 heuristics.
+
+        Uses position 7 to disambiguate the 30-year cycle:
+        - If position 7 is a letter, treat as 2010+ cycle
+        - Else treat as 1980-2009 cycle for overlapping codes
+        """
         if not vin or len(vin) < 10:
             return None
 
-        year_codes = {
-            'A': 2010, 'B': 2011, 'C': 2012, 'D': 2013,
-            'E': 2014, 'F': 2015, 'G': 2016, 'H': 2017,
-            'J': 2018, 'K': 2019, 'L': 2020, 'M': 2021,
-            'N': 2022, 'P': 2023, 'R': 2024, 'S': 2025,
-            'T': 2026, 'V': 2027, 'W': 2028, 'X': 2029,
-            'Y': 2030, '1': 2001, '2': 2002, '3': 2003,
-            '4': 2004, '5': 2005, '6': 2006, '7': 2007,
-            '8': 2008, '9': 2009
-        }
-
         year_char = vin[9].upper()
-        return year_codes.get(year_char)
+        is_2010_plus = False
+        if len(vin) >= 7:
+            c7 = vin[6]
+            is_2010_plus = c7.isalpha()
+
+        # Letter codes: A-Y (excluding I, O, Q, U, Z)
+        # Map to 1980-2000 or 2010-2030 depending on cycle
+        letter_codes = 'ABCDEFGHJKLMNPRSTVWXY'
+        if year_char in letter_codes:
+            # Find offset in sequence (A=0, B=1, ..., Y=20)
+            offset = letter_codes.index(year_char)
+            return (2010 + offset) if is_2010_plus else (1980 + offset)
+
+        # Digits: 1-9 map to 2001-2009 or 2031-2039 depending on cycle
+        if year_char in '123456789':
+            val = int(year_char)
+            return 2030 + val if is_2010_plus else 2000 + val
+
+        return None
 
     @classmethod
     def is_supported(cls, vin: str) -> bool:

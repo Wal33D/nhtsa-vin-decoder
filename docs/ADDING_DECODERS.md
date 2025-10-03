@@ -13,7 +13,7 @@ The offline VIN decoder system uses a two-tier approach:
 Each manufacturer decoder should follow this pattern:
 
 ```java
-package com.obddroid.api.offline;
+package io.github.vindecoder.offline;
 
 public class [Manufacturer]Decoder {
     // Static maps for decoding patterns
@@ -52,7 +52,7 @@ Create a new file: `[Manufacturer]Decoder.java`
 Example for Ford:
 
 ```java
-package com.obddroid.api.offline;
+package io.github.vindecoder.offline;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -390,7 +390,7 @@ public class ChevroletDecoder {
 ## Contributing
 
 When adding a new decoder:
-1. Create the decoder class in `/java/com/obddroid/api/offline/`
+1. Create the decoder class in `/java/io/github/vindecoder/offline/`
 2. Add integration in `OfflineVINDecoder.java`
 3. Test with real VINs
 4. Submit a pull request with:

@@ -11,7 +11,7 @@ Email: aquataze@yahoo.com
 import urllib.request
 import urllib.error
 import json
-from typing import Dict, Optional, Callable
+from typing import Dict, Optional, Callable, List
 from dataclasses import dataclass
 from functools import lru_cache
 
@@ -81,10 +81,10 @@ class NHTSAVinDecoder:
 
     BASE_URL = "https://vpic.nhtsa.dot.gov/api/vehicles"
 
-    def __init__(self, cache_size: int = 128):
-        """Initialize decoder with optional cache size"""
-        # LRU cache decorator will be applied to decode method
-        self._cache_size = cache_size
+    def __init__(self):
+        """Initialize decoder"""
+        # Using @lru_cache on decode for caching
+        pass
 
     @lru_cache(maxsize=128)
     def decode(self, vin: str, model_year: Optional[str] = None) -> VehicleData:
@@ -248,6 +248,25 @@ class NHTSAVinDecoder:
         thread = threading.Thread(target=_decode_thread)
         thread.daemon = True
         thread.start()
+
+    def decode_batch(self, vins: List[str]) -> Dict[str, VehicleData]:
+        """Decode multiple VINs and return a mapping of VIN to VehicleData.
+
+        Args:
+            vins: List of VIN strings
+
+        Returns:
+            Dict mapping VIN -> VehicleData
+        """
+        results: Dict[str, VehicleData] = {}
+        if not vins:
+            return results
+        for v in vins:
+            try:
+                results[v] = self.decode(v)
+            except Exception as e:
+                results[v] = VehicleData(vin=v, error_text=f"Decode error: {e}")
+        return results
 
     def get_makes_for_manufacturer(self, manufacturer: str) -> list:
         """

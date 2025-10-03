@@ -1,4 +1,4 @@
-package com.obddroid.api.offline;
+package io.github.vindecoder.offline;
 
 /**
  * VIN Validator
@@ -157,15 +157,17 @@ public class VINValidator {
             case 'W': return is2010Plus ? 2028 : 1998;
             case 'X': return is2010Plus ? 2029 : 1999;
             case 'Y': return is2010Plus ? 2030 : 2000;
-            case '1': return 2001;
-            case '2': return 2002;
-            case '3': return 2003;
-            case '4': return 2004;
-            case '5': return 2005;
-            case '6': return 2006;
-            case '7': return 2007;
-            case '8': return 2008;
-            case '9': return 2009;
+            // Digits were used in 2001-2009 and will be reused for 2031-2039.
+            // Use 7th-character heuristic: if position 7 is a letter, treat as 2010+ cycle.
+            case '1': return is2010Plus ? 2031 : 2001;
+            case '2': return is2010Plus ? 2032 : 2002;
+            case '3': return is2010Plus ? 2033 : 2003;
+            case '4': return is2010Plus ? 2034 : 2004;
+            case '5': return is2010Plus ? 2035 : 2005;
+            case '6': return is2010Plus ? 2036 : 2006;
+            case '7': return is2010Plus ? 2037 : 2007;
+            case '8': return is2010Plus ? 2038 : 2008;
+            case '9': return is2010Plus ? 2039 : 2009;
             default: return null;
         }
     }

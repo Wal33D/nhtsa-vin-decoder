@@ -1,4 +1,4 @@
-package com.obddroid.api.nhtsa;
+package io.github.vindecoder.nhtsa;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.List;

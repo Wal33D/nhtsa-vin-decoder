@@ -1,4 +1,4 @@
-package com.obddroid.api.offline;
+package io.github.vindecoder.offline;
 
 import java.util.HashMap;
 import java.util.Map;

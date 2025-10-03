@@ -1,4 +1,4 @@
-package com.obddroid.api.nhtsa;
+package io.github.vindecoder.nhtsa;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
@@ -343,6 +343,5 @@ public class VehicleData {
     public List<Result> getResults() { return results; }
     public void setResults(List<Result> results) { this.results = results; }
 
-    public boolean isValid(boolean valid) { return this.valid; }
     public void setValid(boolean valid) { this.valid = valid; }
 }

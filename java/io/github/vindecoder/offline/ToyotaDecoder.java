@@ -1,4 +1,4 @@
-package com.obddroid.api.offline;
+package io.github.vindecoder.offline;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -403,8 +403,9 @@ public class ToyotaDecoder {
                     info.transmissionSpeeds = "8";
                 }
             } else {
+                // Default sensible automatic transmission for recent Toyota/Lexus
                 info.transmissionStyle = "Automatic";
-                info.transmissionSpeeds = "6" or "8";
+                info.transmissionSpeeds = "8";
             }
         }
 

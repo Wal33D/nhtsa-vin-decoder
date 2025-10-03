@@ -1,6 +1,4 @@
-package com.obddroid.api.nhtsa;
-
-import android.util.Log;
+package io.github.vindecoder.nhtsa;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -91,14 +89,14 @@ public class VINDecoderService {
         if (cache.containsKey(normalizedVin)) {
             VehicleData cached = cache.get(normalizedVin);
             if (cached != null) {
-                Log.d(TAG, "Returning cached VIN data for: " + normalizedVin);
+                System.out.println(TAG + ": Returning cached VIN data for: " + normalizedVin);
                 callback.onSuccess(cached);
                 return;
             }
         }
 
         // Make API call
-        Log.d(TAG, "Decoding VIN: " + normalizedVin);
+        System.out.println(TAG + ": Decoding VIN: " + normalizedVin);
         Call<VINResponse> call = apiService.decodeVIN(normalizedVin, "json");
 
         call.enqueue(new Callback<VINResponse>() {
@@ -115,29 +113,29 @@ public class VINDecoderService {
                             // Cache the result
                             cache.put(normalizedVin, vehicleData);
 
-                            Log.d(TAG, "Successfully decoded VIN: " + vehicleData.getDisplayName());
+                            System.out.println(TAG + ": Successfully decoded VIN: " + vehicleData.getDisplayName());
                             callback.onSuccess(vehicleData);
                         } else {
                             String error = vinResponse.getErrorText();
                             if (error == null || error.isEmpty()) {
                                 error = "Invalid VIN or no data available";
                             }
-                            Log.e(TAG, "VIN decode error: " + error);
+                            System.err.println(TAG + ": VIN decode error: " + error);
                             callback.onError(error);
                         }
                     } else {
-                        Log.e(TAG, "No valid data in response");
+                        System.err.println(TAG + ": No valid data in response");
                         callback.onError("No vehicle data found for this VIN");
                     }
                 } else {
-                    Log.e(TAG, "API call unsuccessful: " + response.code());
+                    System.err.println(TAG + ": API call unsuccessful: " + response.code());
                     callback.onError("Failed to decode VIN. HTTP " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<VINResponse> call, Throwable t) {
-                Log.e(TAG, "API call failed", t);
+                System.err.println(TAG + ": API call failed: " + t.getMessage());
                 callback.onError("Network error: " + t.getMessage());
             }
         });
@@ -163,14 +161,14 @@ public class VINDecoderService {
         if (cache.containsKey(cacheKey)) {
             VehicleData cached = cache.get(cacheKey);
             if (cached != null) {
-                Log.d(TAG, "Returning cached VIN data for: " + normalizedVin + " year: " + modelYear);
+                System.out.println(TAG + ": Returning cached VIN data for: " + normalizedVin + " year: " + modelYear);
                 callback.onSuccess(cached);
                 return;
             }
         }
 
         // Make API call with year
-        Log.d(TAG, "Decoding VIN with year: " + normalizedVin + " " + modelYear);
+        System.out.println(TAG + ": Decoding VIN with year: " + normalizedVin + " " + modelYear);
         Call<VINResponse> call = apiService.decodeVINWithYear(normalizedVin, modelYear, "json");
 
         call.enqueue(new Callback<VINResponse>() {
@@ -187,29 +185,29 @@ public class VINDecoderService {
                             cache.put(cacheKey, vehicleData);
                             cache.put(normalizedVin, vehicleData); // Also cache without year
 
-                            Log.d(TAG, "Successfully decoded VIN: " + vehicleData.getDisplayName());
+                            System.out.println(TAG + ": Successfully decoded VIN: " + vehicleData.getDisplayName());
                             callback.onSuccess(vehicleData);
                         } else {
                             String error = vinResponse.getErrorText();
                             if (error == null || error.isEmpty()) {
                                 error = "Invalid VIN or no data available";
                             }
-                            Log.e(TAG, "VIN decode error: " + error);
+                            System.err.println(TAG + ": VIN decode error: " + error);
                             callback.onError(error);
                         }
                     } else {
-                        Log.e(TAG, "No valid data in response");
+                        System.err.println(TAG + ": No valid data in response");
                         callback.onError("No vehicle data found for this VIN");
                     }
                 } else {
-                    Log.e(TAG, "API call unsuccessful: " + response.code());
+                    System.err.println(TAG + ": API call unsuccessful: " + response.code());
                     callback.onError("Failed to decode VIN. HTTP " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<VINResponse> call, Throwable t) {
-                Log.e(TAG, "API call failed", t);
+                System.err.println(TAG + ": API call failed: " + t.getMessage());
                 callback.onError("Network error: " + t.getMessage());
             }
         });
@@ -220,7 +218,7 @@ public class VINDecoderService {
      */
     public void clearCache() {
         cache.clear();
-        Log.d(TAG, "VIN cache cleared");
+        System.out.println(TAG + ": VIN cache cleared");
     }
 
     /**

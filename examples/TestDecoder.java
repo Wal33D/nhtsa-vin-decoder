@@ -1,7 +1,7 @@
 package examples;
 
-import com.obddroid.api.offline.OfflineVINDecoder;
-import com.obddroid.api.nhtsa.VehicleData;
+import io.github.vindecoder.offline.OfflineVINDecoder;
+import io.github.vindecoder.nhtsa.VehicleData;
 
 /**
  * Example demonstrating offline VIN decoding

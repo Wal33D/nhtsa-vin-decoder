@@ -118,9 +118,9 @@ from wmi_database import WMIDatabase
 manufacturer = WMIDatabase.get_manufacturer('1HGCM82633A004352')
 # Returns: "Honda"
 
-# Get country from VIN
-country = WMIDatabase.get_country('WBA5B3C50GG252337')
-# Returns: "Germany"
+# Get region from VIN
+region = WMIDatabase.get_country('WBA5B3C50GG252337')
+# Returns: "Europe"
 
 # Get year from VIN
 year = WMIDatabase.get_year('5YJ3E1EA5KF000316')
@@ -159,15 +159,22 @@ WMI_MAP = {
 }
 
 REGION_MAP = {
-    '1': 'United States',
-    '2': 'Canada',
-    '3': 'Mexico',
-    '4': 'United States',
-    '5': 'United States',
-    'J': 'Japan',
-    'K': 'South Korea',
-    'W': 'Germany',
-    # ... all regions
+    # North America
+    '1': 'North America', '2': 'North America', '3': 'North America',
+    '4': 'North America', '5': 'North America',
+    # Oceania
+    '6': 'Oceania', '7': 'Oceania',
+    # South America
+    '8': 'South America', '9': 'South America',
+    # Africa (A-H)
+    'A': 'Africa', 'B': 'Africa', 'C': 'Africa', 'D': 'Africa',
+    'E': 'Africa', 'F': 'Africa', 'G': 'Africa', 'H': 'Africa',
+    # Asia (J-R)
+    'J': 'Asia', 'K': 'Asia', 'L': 'Asia', 'M': 'Asia', 'N': 'Asia',
+    'P': 'Asia', 'R': 'Asia',
+    # Europe (S-Z)
+    'S': 'Europe', 'T': 'Europe', 'U': 'Europe', 'V': 'Europe',
+    'W': 'Europe', 'X': 'Europe', 'Y': 'Europe', 'Z': 'Europe',
 }
 ```
 
@@ -175,7 +182,7 @@ REGION_MAP = {
 
 While the WMI database provides extensive coverage, it has some limitations:
 
-1. **Basic Information Only**: Provides manufacturer, country, and year only
+1. **Basic Information Only**: Provides manufacturer, region, and year only
 2. **No Model Details**: Cannot determine specific model, trim, or features
 3. **No Technical Specs**: No engine, transmission, or performance data
 4. **Static Database**: Requires updates for new manufacturers or codes

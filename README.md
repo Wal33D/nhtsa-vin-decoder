@@ -26,7 +26,7 @@ Advanced VIN decoder featuring both enhanced offline decoding capabilities and o
 
 ```
 nhtsa-vin-decoder/
-├── java/com/obddroid/api/
+├── java/io/github/vindecoder/
 │   ├── offline/                    # Offline decoder implementation
 │   │   ├── OfflineVINDecoder.java  # Main offline decoder
 │   │   ├── VINValidator.java       # VIN validation & structure
@@ -88,8 +88,8 @@ All of the above PLUS safety ratings, recalls, NCAP data, and more.
 
 ### Java - Offline Mode (No Internet)
 ```java
-import com.obddroid.api.offline.OfflineVINDecoder;
-import com.obddroid.api.nhtsa.VehicleData;
+import io.github.vindecoder.offline.OfflineVINDecoder;
+import io.github.vindecoder.nhtsa.VehicleData;
 
 OfflineVINDecoder decoder = new OfflineVINDecoder();
 VehicleData vehicle = decoder.decode("4JGDA5HB7JB158144");
@@ -112,8 +112,8 @@ VINDecoderService decoder = VINDecoderService.getInstance();
 decoder.decodeVIN("4JGDA5HB7JB158144", new VINDecoderCallback() {
     @Override
     public void onSuccess(VehicleData vehicle) {
-        // Full NHTSA data including safety ratings
-        System.out.println("NCAP Rating: " + vehicle.getOverallRating());
+        // Full NHTSA data returned
+        System.out.println("Vehicle: " + vehicle.getDisplayName());
     }
 
     @Override
@@ -123,6 +123,23 @@ decoder.decodeVIN("4JGDA5HB7JB158144", new VINDecoderCallback() {
     }
 });
 ```
+
+## 🧪 Testing
+
+### Java (Year Decoding Test)
+- Using Gradle (recommended):
+```
+./gradlew test
+```
+This runs JUnit tests validating VIN model year decoding across the 30-year cycle, including 2031–2039 (digit codes with position 7 letter heuristic).
+
+### Python (Year Decoding Test)
+- Run tests:
+```
+python3 tests/test_year.py
+```
+
+This validates the Python WMI fallback year-decoding heuristic matches the Java logic.
 
 ### Python
 ```python
@@ -263,6 +280,25 @@ python3 process_wmi.py
 # Copy generated code to WMIDatabase.java
 ```
 
+## 🧩 Using As a Gradle Submodule
+
+- Add this repo as a Git submodule, e.g. under `modules/nhtsa-vin-decoder`.
+- In your root `settings.gradle` (or `settings.gradle.kts`) include the project:
+```
+include ':nhtsa-vin-decoder'
+project(':nhtsa-vin-decoder').projectDir = new File(rootDir, 'modules/nhtsa-vin-decoder')
+```
+- In your app module `build.gradle` add a dependency:
+```
+implementation project(':nhtsa-vin-decoder')
+```
+- If you use the online NHTSA API classes, add runtime dependencies in your app:
+```
+implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+implementation 'com.google.code.gson:gson:2.10.1'
+```
+
 ## ⚡ Performance
 
 - **Offline Decode**: <1ms (HashMap lookup)
@@ -283,7 +319,7 @@ python3 process_wmi.py
 
 Found a missing WMI code or want to add a manufacturer decoder?
 1. Fork the repository
-2. Add codes to `data/*.csv` or create new decoder in `java/com/obddroid/api/offline/`
+2. Add codes to `data/*.csv` or create new decoder in `java/io/github/vindecoder/offline/`
 3. Submit PR with test results
 
 ## 📄 License

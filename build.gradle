@@ -1,0 +1,44 @@
+plugins {
+    id 'java-library'
+}
+
+group = 'io.github.vindecoder'
+version = '0.1.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['java']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['tests']
+        }
+    }
+}
+
+dependencies {
+    // Online API (NHTSA) compile-time deps; downstream app should add runtime implementations if used
+    compileOnly 'com.squareup.retrofit2:retrofit:2.9.0'
+    compileOnly 'com.squareup.retrofit2:converter-gson:2.9.0'
+    compileOnly 'com.google.code.gson:gson:2.10.1'
+
+    // Test framework
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+

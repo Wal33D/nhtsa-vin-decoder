@@ -1,4 +1,4 @@
-package com.obddroid.api.offline;
+package io.github.vindecoder.offline;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,38 +22,46 @@ public class WMIDatabase {
     }
 
     private static void initializeRegions() {
-        REGION_MAP.put('1', "United States");
-        REGION_MAP.put('2', "Canada");
-        REGION_MAP.put('3', "Mexico");
-        REGION_MAP.put('4', "United States");
-        REGION_MAP.put('5', "United States");
-        REGION_MAP.put('6', "Australia");
-        REGION_MAP.put('7', "New Zealand");
-        REGION_MAP.put('8', "Argentina");
-        REGION_MAP.put('9', "Brazil");
-        REGION_MAP.put('A', "South Africa");
-        REGION_MAP.put('B', "United Kingdom");
-        REGION_MAP.put('C', "China");
-        REGION_MAP.put('D', "Germany");
-        REGION_MAP.put('E', "Spain");
-        REGION_MAP.put('F', "France");
-        REGION_MAP.put('G', "United Kingdom");
-        REGION_MAP.put('H', "Hungary");
-        REGION_MAP.put('J', "Japan");
-        REGION_MAP.put('K', "Korea");
-        REGION_MAP.put('L', "China");
-        REGION_MAP.put('M', "India");
-        REGION_MAP.put('N', "Turkey");
-        REGION_MAP.put('P', "Philippines");
-        REGION_MAP.put('R', "Taiwan");
-        REGION_MAP.put('S', "United Kingdom");
-        REGION_MAP.put('T', "Switzerland");
-        REGION_MAP.put('U', "Hungary");
-        REGION_MAP.put('V', "Austria");
-        REGION_MAP.put('W', "Germany");
-        REGION_MAP.put('X', "Russia");
-        REGION_MAP.put('Y', "Belgium");
-        REGION_MAP.put('Z', "Italy");
+        REGION_MAP.clear();
+        // Grouped regional mapping by first character of VIN
+        // North America
+        REGION_MAP.put('1', "North America");
+        REGION_MAP.put('2', "North America");
+        REGION_MAP.put('3', "North America");
+        REGION_MAP.put('4', "North America");
+        REGION_MAP.put('5', "North America");
+        // Oceania
+        REGION_MAP.put('6', "Oceania");
+        REGION_MAP.put('7', "Oceania");
+        // South America
+        REGION_MAP.put('8', "South America");
+        REGION_MAP.put('9', "South America");
+        // Africa (A-H)
+        REGION_MAP.put('A', "Africa");
+        REGION_MAP.put('B', "Africa");
+        REGION_MAP.put('C', "Africa");
+        REGION_MAP.put('D', "Africa");
+        REGION_MAP.put('E', "Africa");
+        REGION_MAP.put('F', "Africa");
+        REGION_MAP.put('G', "Africa");
+        REGION_MAP.put('H', "Africa");
+        // Asia (J-R)
+        REGION_MAP.put('J', "Asia");
+        REGION_MAP.put('K', "Asia");
+        REGION_MAP.put('L', "Asia");
+        REGION_MAP.put('M', "Asia");
+        REGION_MAP.put('N', "Asia");
+        REGION_MAP.put('P', "Asia");
+        REGION_MAP.put('R', "Asia");
+        // Europe (S-Z)
+        REGION_MAP.put('S', "Europe");
+        REGION_MAP.put('T', "Europe");
+        REGION_MAP.put('U', "Europe");
+        REGION_MAP.put('V', "Europe");
+        REGION_MAP.put('W', "Europe");
+        REGION_MAP.put('X', "Europe");
+        REGION_MAP.put('Y', "Europe");
+        REGION_MAP.put('Z', "Europe");
     }
 
     private static void initializeWMI() {

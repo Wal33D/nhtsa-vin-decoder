@@ -1,6 +1,6 @@
-package com.obddroid.api.offline;
+package io.github.vindecoder.offline;
 
-import com.obddroid.api.nhtsa.VehicleData;
+import io.github.vindecoder.nhtsa.VehicleData;
 import java.util.ArrayList;
 import java.util.List;
 

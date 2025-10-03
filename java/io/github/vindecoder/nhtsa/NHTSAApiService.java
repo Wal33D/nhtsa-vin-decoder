@@ -1,4 +1,4 @@
-package com.obddroid.api.nhtsa;
+package io.github.vindecoder.nhtsa;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
