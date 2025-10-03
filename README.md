@@ -173,21 +173,31 @@ Easily extensible for:
 
 ## 🔍 Comparison
 
-| Feature | This Library (Offline) | This Library (Online) | Basic WMI Only |
-|---------|------------------------|----------------------|----------------|
-| Manufacturer | ✓ 948+ codes | ✓ | ~100-300 codes |
-| Make/Model | ✓ (Mercedes) | ✓ All | ✗ |
-| Year | ✓ 1980-2039 | ✓ | Partial |
-| Trim/Series | ✓ (Mercedes) | ✓ | ✗ |
-| Engine Details | ✓ (Mercedes) | ✓ | ✗ |
-| Transmission | ✓ (Mercedes) | ✓ | ✗ |
-| Body Style | ✓ (Mercedes) | ✓ | ✗ |
-| Plant Location | ✓ | ✓ | ✗ |
-| Weight Specs | ✓ (Mercedes) | ✓ | ✗ |
-| Safety Data | ✗ | ✓ | ✗ |
-| Works Offline | ✓ | Falls back | ✓ |
-| VIN Validation | ✓ ISO 3779 | ✓ | Basic |
-| Free | ✓ | ✓ | ✓ |
+### Current Capabilities (What We Actually Have)
+
+| Feature | Our Offline Decoder | NHTSA API (Online) | Basic WMI Only |
+|---------|-------------------|-------------------|----------------|
+| **Manufacturer** | ✓ 948+ codes | ✓ All | ~100-300 codes |
+| **Make** | ✓ All from WMI | ✓ All | ✓ Limited |
+| **Model** | ✓ Mercedes only* | ✓ All | ✗ |
+| **Year** | ✓ 1980-2039 | ✓ All | ✗ |
+| **Trim/Series** | ✓ Mercedes only* | ✓ All | ✗ |
+| **Engine Details** | ✓ Mercedes only* | ✓ All | ✗ |
+| **Transmission** | ✓ Mercedes only* | ✓ All | ✗ |
+| **Body Style** | ✓ Mercedes only* | ✓ All | ✗ |
+| **Drive Type** | ✓ Mercedes only* | ✓ All | ✗ |
+| **Plant Location** | ✓ Basic all | ✓ Detailed | ✗ |
+| **Weight Specs** | ✓ Mercedes only* | ✓ All | ✗ |
+| **VIN Validation** | ✓ ISO 3779 | ✓ | Basic |
+| **Check Digit** | ✓ Full validation | ✓ | ✗ |
+| **Region/Country** | ✓ All | ✓ All | ✓ Basic |
+| **Safety Data** | ✗ | ✓ NCAP ratings | ✗ |
+| **Recall Data** | ✗ | ✓ | ✗ |
+| **Works Offline** | ✓ Always | ✗ Needs internet | ✓ |
+| **Speed** | <1ms | 200-500ms | <1ms |
+| **Free** | ✓ | ✓ | ✓ |
+
+*Can be extended to other manufacturers by adding decoders (see [ADDING_DECODERS.md](docs/ADDING_DECODERS.md))
 
 ## 📈 Recent Improvements
 
