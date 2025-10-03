@@ -344,4 +344,19 @@ public class VehicleData {
     public void setResults(List<Result> results) { this.results = results; }
 
     public void setValid(boolean valid) { this.valid = valid; }
+
+    // Additional setters for offline decoder support
+    public void setPlantState(String plantState) { this.plantState = plantState; }
+    public void setBodyClass(String bodyClass) { this.bodyClass = bodyClass; }
+    public void setDoors(String doors) { this.doors = doors; }
+    public void setDriveType(String driveType) { this.driveType = driveType; }
+    public void setEngineModel(String engineModel) { this.engineModel = engineModel; }
+    public void setEngineCylinders(String engineCylinders) { this.engineCylinders = engineCylinders; }
+    public void setDisplacementL(String displacementL) { this.displacementL = displacementL; }
+    public void setFuelTypePrimary(String fuelTypePrimary) { this.fuelTypePrimary = fuelTypePrimary; }
+    public void setTransmissionStyle(String transmissionStyle) { this.transmissionStyle = transmissionStyle; }
+    public void setTransmissionSpeeds(String transmissionSpeeds) { this.transmissionSpeeds = transmissionSpeeds; }
+    public void setTrim(String trim) { this.trim = trim; }
+    public void setGvwr(String gvwr) { this.gvwr = gvwr; }
+    public void setCurbWeight(String curbWeight) { this.curbWeight = curbWeight; }
 }
