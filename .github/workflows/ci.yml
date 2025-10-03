@@ -38,5 +38,5 @@ jobs:
       - name: Run Python tests
         run: |
           python3 --version
-          python3 tests/test_year.py
+          PYTHONPATH=$GITHUB_WORKSPACE python3 tests/test_year.py
 
