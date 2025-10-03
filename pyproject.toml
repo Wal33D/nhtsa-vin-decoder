@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nhtsa-vin-decoder"
+version = "0.1.0"
+description = "World-class VIN decoder with comprehensive offline database (2,015+ WMI codes) and NHTSA vPIC API integration"
+readme = "README.md"
+authors = [
+    {name = "Wal33D", email = "aquataze@yahoo.com"}
+]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Hardware :: Hardware Drivers",
+    "Operating System :: OS Independent",
+]
+keywords = [
+    "vin", "decoder", "nhtsa", "vehicle", "automotive", "obd2", "vpic",
+    "wmi", "vin-decoder", "car", "vehicle-identification", "offline"
+]
+requires-python = ">=3.6"
+dependencies = []
+
+[project.optional-dependencies]
+api = ["requests>=2.25.0"]
+dev = [
+    "pytest>=6.0",
+    "pytest-cov>=2.10",
+    "black>=21.0",
+    "flake8>=3.9",
+]
+web = [
+    "flask>=2.0.0",
+    "flask-cors>=3.0.10",
+]
+
+[project.urls]
+Homepage = "https://github.com/Wal33D/nhtsa-vin-decoder"
+Documentation = "https://github.com/Wal33D/nhtsa-vin-decoder#readme"
+Repository = "https://github.com/Wal33D/nhtsa-vin-decoder"
+Issues = "https://github.com/Wal33D/nhtsa-vin-decoder/issues"
+Changelog = "https://github.com/Wal33D/nhtsa-vin-decoder/blob/main/CHANGELOG.md"
+
+[tool.setuptools]
+packages = ["python"]
+
+[tool.setuptools.package-data]
+python = ["*.py"]
+
+[tool.black]
+line-length = 100
+target-version = ['py36', 'py37', 'py38', 'py39', 'py310', 'py311']
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

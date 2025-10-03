@@ -1,0 +1,14 @@
+include README.md
+include LICENSE
+include CHANGELOG.md
+include pyproject.toml
+recursive-include python *.py
+recursive-include docs *.md
+recursive-include examples *.py
+exclude tests/*
+exclude .github/*
+exclude java/*
+exclude data/*
+exclude *.gradle
+exclude gradlew
+exclude gradlew.bat
