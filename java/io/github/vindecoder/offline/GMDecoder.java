@@ -366,7 +366,7 @@ public class GMDecoder {
                     info.transmissionSpeeds = "10";  // Allison 10-speed
                 } else {
                     info.transmissionStyle = "Automatic";
-                    info.transmissionSpeeds = "8" or "10";  // 8 or 10-speed depending on year
+                    info.transmissionSpeeds = "8-10";  // 8 or 10-speed depending on year
                 }
             } else if (info.model.contains("Tahoe") || info.model.contains("Suburban") ||
                       info.model.contains("Yukon") || info.model.contains("Escalade")) {
@@ -383,7 +383,7 @@ public class GMDecoder {
                         info.transmissionSpeeds = "10";
                     }
                 } else {
-                    info.transmissionSpeeds = "6" or "8" or "9";  // Varies by model
+                    info.transmissionSpeeds = "6-9";  // Varies by model
                 }
             }
         }
