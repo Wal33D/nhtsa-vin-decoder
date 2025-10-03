@@ -12,7 +12,7 @@ A WMI code consists of:
 
 ## Coverage
 
-The database includes 948+ WMI codes covering:
+The database includes 2,015+ WMI codes covering:
 
 ### Regional Coverage
 - **North America**: United States, Canada, Mexico
@@ -175,7 +175,7 @@ WMI_MAP = {
     '1F1': 'Ford',
     '1FA': 'Ford',
     '1FB': 'Ford',
-    # ... 948+ entries
+    # ... 2,015+ entries
 }
 
 REGION_MAP = {

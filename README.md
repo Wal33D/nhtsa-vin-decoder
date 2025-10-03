@@ -1,18 +1,18 @@
 # NHTSA VIN Decoder
 
-World-class VIN decoder with comprehensive offline database (948+ WMI codes) and NHTSA vPIC API integration
+World-class VIN decoder with comprehensive offline database (2,015+ WMI codes) and NHTSA vPIC API integration
 
 **Author**: Wal33D
 **Email**: aquataze@yahoo.com
 
 ## 🎯 Overview
 
-Advanced VIN decoder featuring both enhanced offline decoding capabilities and official NHTSA vPIC API integration. Provides complete vehicle specifications through manufacturer-specific decoders and a comprehensive WMI database with **948+ manufacturer codes**.
+Advanced VIN decoder featuring both enhanced offline decoding capabilities and official NHTSA vPIC API integration. Provides complete vehicle specifications through manufacturer-specific decoders and a comprehensive WMI database with **2,015+ manufacturer codes**.
 
 ## ✨ Features
 
 - **Enhanced Offline Decoder** - Full VIN decoding without internet
-- **948+ Manufacturer Codes** - Comprehensive WMI database (3x industry standard)
+- **2,015+ Manufacturer Codes** - Comprehensive WMI database (6x industry standard)
 - **Manufacturer-Specific Decoders** - Detailed model/trim/engine extraction
 - **VIN Validation** - Check digit verification per ISO 3779
 - **Year Decoding** - Accurate model year extraction (1980-2039)
@@ -154,7 +154,7 @@ print(f"Vehicle: {vehicle.year} {vehicle.make} {vehicle.model}")
 
 ## 📊 Offline Decoder Coverage
 
-### Global Manufacturer Support (948+ WMI Codes)
+### Global Manufacturer Support (2,015+ WMI Codes)
 
 **North America** (Complete)
 - United States: Ford, GM, Tesla, Rivian, Lucid
@@ -197,7 +197,7 @@ Easily extensible for:
 
 | Feature | Our Offline Decoder | NHTSA API (Online) | Basic WMI Only |
 |---------|-------------------|-------------------|----------------|
-| **Manufacturer** | ✓ 948+ codes | ✓ All | ~100-300 codes |
+| **Manufacturer** | ✓ 2,015+ codes | ✓ All | ~100-300 codes |
 | **Make** | ✓ All from WMI | ✓ All | ✓ Limited |
 | **Model** | ✓ Ford, GM, Toyota, Mercedes* | ✓ All | ✗ |
 | **Year** | ✓ 1980-2039 | ✓ All | ✗ |
@@ -222,7 +222,7 @@ Easily extensible for:
 ## 📈 Recent Improvements
 
 ### Version 2.0 (October 2025)
-- **3x More Coverage**: Increased from 311 to 948+ WMI codes
+- **6x More Coverage**: Increased from 311 to 2,015+ WMI codes
 - **Fixed Year Bug**: Now correctly decodes 2010+ model years
 - **4 Manufacturer Decoders**: Mercedes-Benz, Ford, GM, Toyota/Lexus with full specs
 - **Enhanced Validation**: ISO 3779 check digit verification

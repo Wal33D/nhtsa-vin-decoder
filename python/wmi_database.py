@@ -9,7 +9,7 @@ Author: Wal33D
 class WMIDatabase:
     """Static WMI database for offline manufacturer lookups"""
 
-    # Comprehensive WMI mapping - 1,500+ codes
+    # Comprehensive WMI mapping - 2,015+ codes
     WMI_MAP = {
         # United States (1, 4, 5)
         '1FA': 'Ford', '1FB': 'Ford', '1FC': 'Ford', '1FD': 'Ford', '1FM': 'Ford',
