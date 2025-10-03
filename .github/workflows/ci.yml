@@ -19,24 +19,16 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
-      - name: Compile Java and JUnit tests
-        run: |
-          curl -L -o junit.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/1.10.2/junit-platform-console-standalone-1.10.2.jar
-          find java -name "*.java" > sources.txt || true
-          # Only compile if source files exist
-          if [ -s sources.txt ]; then
-            echo tests/JavaYearDecodingTest.java >> sources.txt
-            javac -cp junit.jar @sources.txt
-          fi
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: '8.4'
+
+      - name: Build with Gradle
+        run: gradle build --no-daemon
 
       - name: Run Java tests
-        run: |
-          if [ -f junit.jar ]; then
-            # Run the JUnit Console against our compiled classes
-            java -jar junit.jar -cp .:java --select-class tests.JavaYearDecodingTest
-          else
-            echo "No Java tests to run"
-          fi
+        run: gradle test --no-daemon
 
       - name: Set up Python
         uses: actions/setup-python@v5
