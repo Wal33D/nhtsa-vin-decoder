@@ -346,4 +346,3 @@ MIT License - Free for commercial and non-commercial use
 - [ ] Honda/Acura decoder
 - [ ] BMW decoder (17-character patterns)
 - [ ] Nissan/Infiniti decoder
-- [ ] Recall integration

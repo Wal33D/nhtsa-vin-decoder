@@ -12,7 +12,7 @@ A WMI code consists of:
 
 ## Coverage
 
-The database includes over 2000 WMI codes covering:
+The database includes 948+ WMI codes covering:
 
 ### Regional Coverage
 - **North America**: United States, Canada, Mexico
@@ -88,25 +88,45 @@ The database includes over 2000 WMI codes covering:
 
 ## VIN Year Decoding
 
-The database supports year decoding from VIN position 10:
+The database supports year decoding from VIN position 10 (1980-2039 range with position 7 heuristic):
 
-| Code | Year | Code | Year |
-|------|------|------|------|
-| 1 | 2001 | G | 2016 |
-| 2 | 2002 | H | 2017 |
-| 3 | 2003 | J | 2018 |
-| 4 | 2004 | K | 2019 |
-| 5 | 2005 | L | 2020 |
-| 6 | 2006 | M | 2021 |
-| 7 | 2007 | N | 2022 |
-| 8 | 2008 | P | 2023 |
-| 9 | 2009 | R | 2024 |
-| A | 2010 | S | 2025 |
-| B | 2011 | T | 2026 |
-| C | 2012 | V | 2027 |
-| D | 2013 | W | 2028 |
-| E | 2014 | X | 2029 |
-| F | 2015 | Y | 2030 |
+### Letter Codes (1980-2000 or 2010-2030)
+| Code | Year (digit at pos 7) | Year (letter at pos 7) |
+|------|----------------------|------------------------|
+| A | 1980 | 2010 |
+| B | 1981 | 2011 |
+| C | 1982 | 2012 |
+| D | 1983 | 2013 |
+| E | 1984 | 2014 |
+| F | 1985 | 2015 |
+| G | 1986 | 2016 |
+| H | 1987 | 2017 |
+| J | 1988 | 2018 |
+| K | 1989 | 2019 |
+| L | 1990 | 2020 |
+| M | 1991 | 2021 |
+| N | 1992 | 2022 |
+| P | 1993 | 2023 |
+| R | 1994 | 2024 |
+| S | 1995 | 2025 |
+| T | 1996 | 2026 |
+| V | 1997 | 2027 |
+| W | 1998 | 2028 |
+| X | 1999 | 2029 |
+| Y | 2000 | 2030 |
+
+### Digit Codes (2001-2009 or 2031-2039)
+| Code | Year (digit at pos 7) | Year (letter at pos 7) |
+|------|----------------------|------------------------|
+| 1 | 2001 | 2031 |
+| 2 | 2002 | 2032 |
+| 3 | 2003 | 2033 |
+| 4 | 2004 | 2034 |
+| 5 | 2005 | 2035 |
+| 6 | 2006 | 2036 |
+| 7 | 2007 | 2037 |
+| 8 | 2008 | 2038 |
+| 9 | 2009 | 2039 |
 
 ## Usage Examples
 
@@ -155,7 +175,7 @@ WMI_MAP = {
     '1F1': 'Ford',
     '1FA': 'Ford',
     '1FB': 'Ford',
-    # ... over 2000 entries
+    # ... 948+ entries
 }
 
 REGION_MAP = {
