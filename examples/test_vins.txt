@@ -1,0 +1,67 @@
+# Test VINs for Validation
+
+## Valid VINs
+
+### Mercedes-Benz
+4JGDA5HB7JB158144 - 2018 GLE 350 4MATIC (USA)
+WDDZF4KB1JA398744 - 2018 E-Class (Germany)
+WDB9061131N590143 - Mercedes-Benz Sprinter
+
+### Ford
+1FTFW1ET5DFC10312 - 2013 F-150 SuperCrew
+1FA6P8CF1J5109084 - 2018 Mustang GT
+1FM5K8GC6LGA15889 - 2020 Explorer ST
+
+### General Motors
+1G1ZD5ST1KF130915 - 2019 Chevrolet Malibu
+1GYS4NKL4KR237088 - 2019 Cadillac Escalade
+1GT12ZEG8KF198094 - 2019 GMC Sierra
+
+### Toyota/Lexus
+JTDKARFU1J3073485 - 2018 Toyota Prius
+4T1B11HK5JU597547 - 2018 Toyota Camry
+JTHBA1D27G5004260 - 2016 Lexus IS
+
+### Tesla
+5YJ3E1EA5JF037274 - 2018 Model 3
+5YJSA1E21HF186172 - 2017 Model S
+
+### Honda/Acura
+1HGCV1F17JA125237 - 2018 Honda Accord
+JH4KA96632C005859 - 2002 Acura TL
+
+### BMW
+WBA8E9C55GK640074 - 2016 BMW 3 Series
+5UXKR0C58H0V58774 - 2017 BMW X5
+
+### Nissan/Infiniti
+1N4AL3AP1FC273695 - 2015 Nissan Altima
+JN1AZ4EH9DM430111 - 2013 Infiniti G37
+
+### Volkswagen/Audi
+3VWD17AJ5EM267503 - 2014 Volkswagen Jetta
+WAUFFAFL5CN002974 - 2012 Audi A4
+
+### Hyundai/Kia
+5NPD84LF6JH033732 - 2018 Hyundai Elantra
+KNDMC5C19J6036773 - 2018 Kia Stinger
+
+### Motorcycles
+1HD1KEM14DB652351 - 2013 Harley-Davidson
+JH2RC5004LM200291 - 2020 Honda CBR
+
+### Commercial Vehicles
+1FVACYDC39HAJ2405 - 2009 Freightliner
+1XKAD49X9FJ458598 - 2015 Kenworth
+
+## Invalid VINs (for testing validation)
+
+### Invalid Check Digit
+1HGCM82633A004353 - Invalid check digit (should be 2)
+
+### Invalid Characters
+1HGCM82633AOIQ352 - Contains invalid letters (O, I, Q)
+
+### Wrong Length
+1HGCM82633A00435 - Too short (16 characters)
+1HGCM82633A0043522 - Too long (18 characters)

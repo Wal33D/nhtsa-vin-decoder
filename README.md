@@ -43,9 +43,13 @@ nhtsa-vin-decoder/
 │   ├── *.csv                      # Source WMI data from WALL-E/vin-decoder
 │   ├── process_wmi.py             # Script to regenerate database
 │   └── wmi_database_generated.java # Generated code
-├── docs/                          # Documentation
-├── ADDING_DECODERS.md            # Guide for adding manufacturers
-└── VIN_DECODER_RESOURCES.md     # External data sources
+└── docs/                          # Documentation
+    ├── ADDING_DECODERS.md        # Guide for adding manufacturers
+    ├── VIN_DECODER_RESOURCES.md  # External data sources
+    ├── API.md                    # Complete API reference
+    ├── INSTALLATION.md           # Setup guide
+    ├── USAGE.md                  # Examples and best practices
+    └── WMI_DATABASE.md          # Offline database details
 ```
 
 ## 🚀 What You Get
@@ -165,7 +169,7 @@ Currently implemented:
 
 Easily extensible for:
 - Ford, GM, Toyota, Honda, etc.
-- See [ADDING_DECODERS.md](ADDING_DECODERS.md) for implementation guide
+- See [ADDING_DECODERS.md](docs/ADDING_DECODERS.md) for implementation guide
 
 ## 🔍 Comparison
 
@@ -218,15 +222,15 @@ pip install requests  # Optional, uses urllib by default
 
 ## 📚 Documentation
 
-- [ADDING_DECODERS.md](ADDING_DECODERS.md) - Add manufacturer-specific decoders
-- [VIN_DECODER_RESOURCES.md](VIN_DECODER_RESOURCES.md) - External data sources
+- [ADDING_DECODERS.md](docs/ADDING_DECODERS.md) - Add manufacturer-specific decoders
+- [VIN_DECODER_RESOURCES.md](docs/VIN_DECODER_RESOURCES.md) - External data sources
 - [API Reference](docs/API.md) - Complete API documentation
 - [WMI Database](docs/WMI_DATABASE.md) - Offline database details
 
 ## 🔧 Extending the Decoder
 
 ### Adding a New Manufacturer Decoder
-See [ADDING_DECODERS.md](ADDING_DECODERS.md) for complete guide.
+See [ADDING_DECODERS.md](docs/ADDING_DECODERS.md) for complete guide.
 
 Quick example for Ford:
 ```java
@@ -291,7 +295,4 @@ MIT License - Free for commercial and non-commercial use
 - [ ] GM/Chevrolet decoder
 - [ ] Toyota/Lexus decoder
 - [ ] BMW decoder (17-character patterns)
-- [ ] Batch VIN processing
-- [ ] VIN history tracking
 - [ ] Recall integration
-- [ ] Mobile SDKs (iOS/Android native)
