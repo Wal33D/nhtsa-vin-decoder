@@ -134,6 +134,69 @@ public class OfflineVINDecoder {
                 if (mbInfo.gvwr != null) vehicleData.setGvwr(mbInfo.gvwr);
                 if (mbInfo.curbWeight != null) vehicleData.setCurbWeight(mbInfo.curbWeight);
             }
+        } else if (manufacturer != null && (manufacturer.contains("Ford") || wmi.startsWith("1F") || wmi.startsWith("2F") || wmi.startsWith("3F"))) {
+            // Use Ford specific decoder
+            FordDecoder.VehicleInfo fordInfo = FordDecoder.decode(vin);
+            if (fordInfo != null) {
+                if (fordInfo.model != null) vehicleData.setModel(fordInfo.model);
+                if (fordInfo.series != null) vehicleData.setTrim(fordInfo.series);
+                if (fordInfo.bodyClass != null) vehicleData.setBodyClass(fordInfo.bodyClass);
+                if (fordInfo.driveType != null) vehicleData.setDriveType(fordInfo.driveType);
+                if (fordInfo.doors != null) vehicleData.setDoors(fordInfo.doors);
+                if (fordInfo.engineDescription != null) {
+                    vehicleData.setEngineModel(fordInfo.engineDescription);
+                    extractEngineDetails(vehicleData, fordInfo.engineDescription);
+                }
+                if (fordInfo.transmissionStyle != null) vehicleData.setTransmissionStyle(fordInfo.transmissionStyle);
+                if (fordInfo.transmissionSpeeds != null) vehicleData.setTransmissionSpeeds(fordInfo.transmissionSpeeds);
+                if (fordInfo.plantCity != null) vehicleData.setPlantCity(fordInfo.plantCity);
+                if (fordInfo.plantState != null) vehicleData.setPlantState(fordInfo.plantState);
+                if (fordInfo.gvwr != null) vehicleData.setGvwr(fordInfo.gvwr);
+                if (fordInfo.curbWeight != null) vehicleData.setCurbWeight(fordInfo.curbWeight);
+            }
+        } else if (manufacturer != null && (manufacturer.contains("GM") || manufacturer.contains("Chevrolet") ||
+                   manufacturer.contains("Cadillac") || manufacturer.contains("Buick") || manufacturer.contains("GMC") ||
+                   wmi.startsWith("1G") || wmi.startsWith("2G") || wmi.startsWith("3G"))) {
+            // Use GM specific decoder
+            GMDecoder.VehicleInfo gmInfo = GMDecoder.decode(vin);
+            if (gmInfo != null) {
+                if (gmInfo.model != null) vehicleData.setModel(gmInfo.model);
+                if (gmInfo.series != null) vehicleData.setTrim(gmInfo.series);
+                if (gmInfo.bodyClass != null) vehicleData.setBodyClass(gmInfo.bodyClass);
+                if (gmInfo.driveType != null) vehicleData.setDriveType(gmInfo.driveType);
+                if (gmInfo.doors != null) vehicleData.setDoors(gmInfo.doors);
+                if (gmInfo.engineDescription != null) {
+                    vehicleData.setEngineModel(gmInfo.engineDescription);
+                    extractEngineDetails(vehicleData, gmInfo.engineDescription);
+                }
+                if (gmInfo.transmissionStyle != null) vehicleData.setTransmissionStyle(gmInfo.transmissionStyle);
+                if (gmInfo.transmissionSpeeds != null) vehicleData.setTransmissionSpeeds(gmInfo.transmissionSpeeds);
+                if (gmInfo.plantCity != null) vehicleData.setPlantCity(gmInfo.plantCity);
+                if (gmInfo.plantState != null) vehicleData.setPlantState(gmInfo.plantState);
+                if (gmInfo.gvwr != null) vehicleData.setGvwr(gmInfo.gvwr);
+                if (gmInfo.curbWeight != null) vehicleData.setCurbWeight(gmInfo.curbWeight);
+            }
+        } else if (manufacturer != null && (manufacturer.contains("Toyota") || manufacturer.contains("Lexus") ||
+                   wmi.startsWith("4T") || wmi.startsWith("5T") || wmi.startsWith("JT"))) {
+            // Use Toyota specific decoder
+            ToyotaDecoder.VehicleInfo toyotaInfo = ToyotaDecoder.decode(vin);
+            if (toyotaInfo != null) {
+                if (toyotaInfo.model != null) vehicleData.setModel(toyotaInfo.model);
+                if (toyotaInfo.series != null) vehicleData.setTrim(toyotaInfo.series);
+                if (toyotaInfo.bodyClass != null) vehicleData.setBodyClass(toyotaInfo.bodyClass);
+                if (toyotaInfo.driveType != null) vehicleData.setDriveType(toyotaInfo.driveType);
+                if (toyotaInfo.doors != null) vehicleData.setDoors(toyotaInfo.doors);
+                if (toyotaInfo.engineDescription != null) {
+                    vehicleData.setEngineModel(toyotaInfo.engineDescription);
+                    extractEngineDetails(vehicleData, toyotaInfo.engineDescription);
+                }
+                if (toyotaInfo.transmissionStyle != null) vehicleData.setTransmissionStyle(toyotaInfo.transmissionStyle);
+                if (toyotaInfo.transmissionSpeeds != null) vehicleData.setTransmissionSpeeds(toyotaInfo.transmissionSpeeds);
+                if (toyotaInfo.plantCity != null) vehicleData.setPlantCity(toyotaInfo.plantCity);
+                if (toyotaInfo.plantState != null) vehicleData.setPlantState(toyotaInfo.plantState);
+                if (toyotaInfo.gvwr != null) vehicleData.setGvwr(toyotaInfo.gvwr);
+                if (toyotaInfo.curbWeight != null) vehicleData.setCurbWeight(toyotaInfo.curbWeight);
+            }
         }
 
         // Determine vehicle type if not already set
@@ -292,6 +355,71 @@ public class OfflineVINDecoder {
             result.setValue(value);
             result.setVariableId(String.valueOf(results.size() + 1));
             results.add(result);
+        }
+    }
+
+    /**
+     * Extracts engine details from engine description and sets them in VehicleData
+     */
+    private void extractEngineDetails(VehicleData vehicleData, String engineDescription) {
+        if (engineDescription == null) return;
+
+        // Extract displacement
+        if (engineDescription.contains("1.5L")) {
+            vehicleData.setDisplacementL("1.5");
+            vehicleData.setEngineCylinders("4");
+        } else if (engineDescription.contains("2.0L")) {
+            vehicleData.setDisplacementL("2.0");
+            vehicleData.setEngineCylinders("4");
+        } else if (engineDescription.contains("2.3L")) {
+            vehicleData.setDisplacementL("2.3");
+            vehicleData.setEngineCylinders("4");
+        } else if (engineDescription.contains("2.5L")) {
+            vehicleData.setDisplacementL("2.5");
+            vehicleData.setEngineCylinders("4");
+        } else if (engineDescription.contains("2.7L")) {
+            vehicleData.setDisplacementL("2.7");
+            vehicleData.setEngineCylinders("6");
+        } else if (engineDescription.contains("3.0L")) {
+            vehicleData.setDisplacementL("3.0");
+            vehicleData.setEngineCylinders("6");
+        } else if (engineDescription.contains("3.5L")) {
+            vehicleData.setDisplacementL("3.5");
+            vehicleData.setEngineCylinders("6");
+        } else if (engineDescription.contains("3.6L")) {
+            vehicleData.setDisplacementL("3.6");
+            vehicleData.setEngineCylinders("6");
+        } else if (engineDescription.contains("4.0L")) {
+            vehicleData.setDisplacementL("4.0");
+            vehicleData.setEngineCylinders("8");
+        } else if (engineDescription.contains("5.0L")) {
+            vehicleData.setDisplacementL("5.0");
+            vehicleData.setEngineCylinders("8");
+        } else if (engineDescription.contains("5.3L")) {
+            vehicleData.setDisplacementL("5.3");
+            vehicleData.setEngineCylinders("8");
+        } else if (engineDescription.contains("5.7L")) {
+            vehicleData.setDisplacementL("5.7");
+            vehicleData.setEngineCylinders("8");
+        } else if (engineDescription.contains("6.2L")) {
+            vehicleData.setDisplacementL("6.2");
+            vehicleData.setEngineCylinders("8");
+        } else if (engineDescription.contains("6.6L")) {
+            vehicleData.setDisplacementL("6.6");
+            vehicleData.setEngineCylinders("8");
+        }
+
+        // Set fuel type
+        if (engineDescription.contains("Electric") && !engineDescription.contains("Hybrid")) {
+            vehicleData.setFuelTypePrimary("Electric");
+        } else if (engineDescription.contains("Hybrid")) {
+            vehicleData.setFuelTypePrimary("Gasoline/Electric Hybrid");
+        } else if (engineDescription.contains("Diesel")) {
+            vehicleData.setFuelTypePrimary("Diesel");
+        } else if (engineDescription.contains("Flex Fuel") || engineDescription.contains("E85")) {
+            vehicleData.setFuelTypePrimary("Flexible Fuel Vehicle");
+        } else if (engineDescription.contains("Gasoline") || engineDescription.matches(".*\\d+\\.\\d+L.*")) {
+            vehicleData.setFuelTypePrimary("Gasoline");
         }
     }
 

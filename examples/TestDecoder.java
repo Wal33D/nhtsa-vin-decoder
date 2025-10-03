@@ -18,7 +18,9 @@ public class TestDecoder {
         String[] testVINs = {
             "4JGDA5HB7JB158144", // Mercedes GLE
             "1FTFW1ET5DFC10312", // Ford F-150
+            "1G1ZD5ST0LF123456", // Chevrolet Malibu
             "5YJ3E1EA5JF037274", // Tesla Model 3
+            "4T1BF1FK5CU123456", // Toyota Camry
             "1HD1KEM14DB652351"  // Harley-Davidson
         };
 

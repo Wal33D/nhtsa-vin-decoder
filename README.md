@@ -166,9 +166,12 @@ print(f"Vehicle: {vehicle.year} {vehicle.make} {vehicle.model}")
 
 Currently implemented:
 - **Mercedes-Benz**: 115+ model variants with full specs
+- **Ford**: 100+ model codes including F-Series, Mustang, Explorer, Edge
+- **GM**: Chevrolet, Cadillac, Buick, GMC with RPO engine codes
+- **Toyota/Lexus**: Comprehensive model and engine coverage
 
 Easily extensible for:
-- Ford, GM, Toyota, Honda, etc.
+- Honda, BMW, Nissan, etc.
 - See [ADDING_DECODERS.md](docs/ADDING_DECODERS.md) for implementation guide
 
 ## 🔍 Comparison
@@ -179,15 +182,15 @@ Easily extensible for:
 |---------|-------------------|-------------------|----------------|
 | **Manufacturer** | ✓ 948+ codes | ✓ All | ~100-300 codes |
 | **Make** | ✓ All from WMI | ✓ All | ✓ Limited |
-| **Model** | ✓ Mercedes only* | ✓ All | ✗ |
+| **Model** | ✓ Ford, GM, Toyota, Mercedes* | ✓ All | ✗ |
 | **Year** | ✓ 1980-2039 | ✓ All | ✗ |
-| **Trim/Series** | ✓ Mercedes only* | ✓ All | ✗ |
-| **Engine Details** | ✓ Mercedes only* | ✓ All | ✗ |
-| **Transmission** | ✓ Mercedes only* | ✓ All | ✗ |
-| **Body Style** | ✓ Mercedes only* | ✓ All | ✗ |
-| **Drive Type** | ✓ Mercedes only* | ✓ All | ✗ |
+| **Trim/Series** | ✓ Ford, GM, Toyota, Mercedes* | ✓ All | ✗ |
+| **Engine Details** | ✓ Ford, GM, Toyota, Mercedes* | ✓ All | ✗ |
+| **Transmission** | ✓ Ford, GM, Toyota, Mercedes* | ✓ All | ✗ |
+| **Body Style** | ✓ Ford, GM, Toyota, Mercedes* | ✓ All | ✗ |
+| **Drive Type** | ✓ Ford, GM, Toyota, Mercedes* | ✓ All | ✗ |
 | **Plant Location** | ✓ Basic all | ✓ Detailed | ✗ |
-| **Weight Specs** | ✓ Mercedes only* | ✓ All | ✗ |
+| **Weight Specs** | ✓ Ford, GM, Toyota, Mercedes* | ✓ All | ✗ |
 | **VIN Validation** | ✓ ISO 3779 | ✓ | Basic |
 | **Check Digit** | ✓ Full validation | ✓ | ✗ |
 | **Region/Country** | ✓ All | ✓ All | ✓ Basic |
@@ -204,7 +207,7 @@ Easily extensible for:
 ### Version 2.0 (October 2025)
 - **3x More Coverage**: Increased from 311 to 948+ WMI codes
 - **Fixed Year Bug**: Now correctly decodes 2010+ model years
-- **Mercedes Decoder**: Full model/trim/engine extraction
+- **4 Manufacturer Decoders**: Mercedes-Benz, Ford, GM, Toyota/Lexus with full specs
 - **Enhanced Validation**: ISO 3779 check digit verification
 - **Extensible Architecture**: Easy to add new manufacturers
 - **Reference Data**: CSV sources included for transparency
@@ -301,8 +304,10 @@ MIT License - Free for commercial and non-commercial use
 
 ## 🔮 Roadmap
 
-- [ ] Ford decoder (positions 4-8 patterns)
-- [ ] GM/Chevrolet decoder
-- [ ] Toyota/Lexus decoder
+- [x] Ford decoder (positions 4-8 patterns)
+- [x] GM/Chevrolet decoder
+- [x] Toyota/Lexus decoder
+- [ ] Honda/Acura decoder
 - [ ] BMW decoder (17-character patterns)
+- [ ] Nissan/Infiniti decoder
 - [ ] Recall integration
