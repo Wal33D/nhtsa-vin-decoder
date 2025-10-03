@@ -425,6 +425,7 @@ MIT License - Free for commercial and non-commercial use
 - WALL-E/vin-decoder for WMI CSV data
 - ISO for VIN standards (ISO 3779:2009)
 - US Department of Transportation
+- Claude (Anthropic) for assistance with GitHub release and PyPI publication
 
 ## 🔮 Roadmap
 
