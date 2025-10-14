@@ -3,6 +3,7 @@
 [![Build Status](https://github.com/Wal33D/nhtsa-vin-decoder/workflows/CI/badge.svg)](https://github.com/Wal33D/nhtsa-vin-decoder/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Java](https://img.shields.io/badge/Java-11+-orange.svg)](https://www.oracle.com/java/)
+[![Android](https://img.shields.io/badge/Android-API%2021+-green.svg)](https://developer.android.com/)
 [![Python](https://img.shields.io/badge/Python-3.6+-blue.svg)](https://www.python.org/)
 
 World-class VIN decoder with comprehensive offline database (2,015+ WMI codes) and NHTSA vPIC API integration
@@ -24,6 +25,27 @@ System.out.println(vehicle.getModelYear() + " " +
                    vehicle.getMake() + " " +
                    vehicle.getModel());
 // Output: 2003 Honda Accord
+```
+
+### Android - With Async Callbacks
+```java
+import io.github.vindecoder.android.VINDecoderAndroid;
+import io.github.vindecoder.nhtsa.VehicleData;
+
+VINDecoderAndroid decoder = new VINDecoderAndroid(context);
+decoder.decodeAsync("1HGCM82633A004352", new VINDecoderAndroid.DecodeCallback() {
+    @Override
+    public void onSuccess(VehicleData vehicle) {
+        // Called on main thread
+        Log.d("VIN", vehicle.getModelYear() + " " + vehicle.getMake());
+        // Output: 2003 Honda
+    }
+
+    @Override
+    public void onError(String error) {
+        Log.e("VIN", "Decode failed: " + error);
+    }
+});
 ```
 
 ### Python - With NHTSA API
@@ -79,6 +101,10 @@ nhtsa-vin-decoder/
 │       ├── VINDecoderService.java
 │       ├── VehicleData.java
 │       └── NHTSAApiService.java
+├── android/                        # Android wrapper library
+│   └── nhtsa-vin-decoder-android/
+│       └── src/main/java/io/github/vindecoder/android/
+│           └── VINDecoderAndroid.java  # Android-friendly async API
 ├── python/                         # Python implementation
 │   ├── nhtsa_vin_decoder.py       # Main decoder with API
 │   └── wmi_database.py            # Offline WMI database
@@ -165,6 +191,46 @@ decoder.decodeVIN("4JGDA5HB7JB158144", new VINDecoderCallback() {
         VehicleData vehicle = new OfflineVINDecoder().decode(vin);
     }
 });
+```
+
+### Android - Complete Example
+```java
+import io.github.vindecoder.android.VINDecoderAndroid;
+import io.github.vindecoder.nhtsa.VehicleData;
+
+public class MainActivity extends AppCompatActivity {
+    private VINDecoderAndroid decoder;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        decoder = new VINDecoderAndroid(this);
+
+        // Async decode with main thread callbacks
+        decoder.decodeAsync("4JGDA5HB7JB158144", new VINDecoderAndroid.DecodeCallback() {
+            @Override
+            public void onSuccess(VehicleData vehicle) {
+                // Safe to update UI - callback runs on main thread
+                textView.setText(vehicle.getModelYear() + " " +
+                               vehicle.getMake() + " " +
+                               vehicle.getModel());
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Or use synchronous methods on background thread
+        new Thread(() -> {
+            VehicleData vehicle = decoder.decode("4JGDA5HB7JB158144");
+            runOnUiThread(() -> {
+                // Update UI
+            });
+        }).start();
+    }
+}
 ```
 
 ## 🧪 Testing
@@ -274,14 +340,35 @@ Easily extensible for:
 
 ## 🛠️ Installation
 
-### Java/Android
+### Java
 ```gradle
 // Add as submodule
 git submodule add https://github.com/Wal33D/nhtsa-vin-decoder.git modules/nhtsa-vin-decoder
 
+// In your root settings.gradle:
+include ':nhtsa-vin-decoder'
+project(':nhtsa-vin-decoder').projectDir = new File(rootDir, 'modules/nhtsa-vin-decoder')
+
+// In your app build.gradle:
+implementation project(':nhtsa-vin-decoder')
+
 // For NHTSA API support, add:
 implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+```
+
+### Android
+```gradle
+// In your root settings.gradle:
+include ':nhtsa-vin-decoder-android'
+include ':nhtsa-vin-decoder-java'
+project(':nhtsa-vin-decoder-android').projectDir = new File(rootDir, 'modules/nhtsa-vin-decoder/android/nhtsa-vin-decoder-android')
+project(':nhtsa-vin-decoder-java').projectDir = new File(rootDir, 'modules/nhtsa-vin-decoder')
+
+// In your app build.gradle:
+implementation project(':nhtsa-vin-decoder-android')
+
+// The Android module already includes Retrofit dependencies
 ```
 
 ### Python

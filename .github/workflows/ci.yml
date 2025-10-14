@@ -30,6 +30,16 @@ jobs:
       - name: Run Java tests
         run: gradle test --no-daemon
 
+      - name: Build Android library
+        working-directory: android
+        run: |
+          chmod +x gradlew || true
+          if [ -f gradlew ]; then
+            ./gradlew clean :nhtsa-vin-decoder-android:assembleRelease --no-daemon
+          else
+            gradle clean :nhtsa-vin-decoder-android:assembleRelease --no-daemon
+          fi
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:

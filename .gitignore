@@ -46,3 +46,22 @@ Thumbs.db
 # Project specific
 *.log
 *.cache
+
+# Gradle
+.gradle/
+**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# Android
+*.apk
+*.aar
+*.ap_
+*.aab
+local.properties
+.externalNativeBuild
+.cxx
+captures/
+*.jks
+*.keystore
