@@ -28,11 +28,12 @@ __author__ = "Wal33D"
 __email__ = "aquataze@yahoo.com"
 __license__ = "MIT"
 
-from .nhtsa_vin_decoder import NHTSAVinDecoder, VehicleData
+from .nhtsa_vin_decoder import NHTSAVinDecoder, VehicleData, RecallRecord
 from .wmi_database import WMIDatabase
 
 __all__ = [
     "NHTSAVinDecoder",
     "VehicleData",
+    "RecallRecord",
     "WMIDatabase",
 ]
