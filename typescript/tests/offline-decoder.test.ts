@@ -13,7 +13,7 @@ describe('OfflineVINDecoder', () => {
       expect(result.vin).toBe('1HGCM82633A123456');
       expect(result.manufacturer).toBe('Honda');
       expect(result.wmi).toBe('1HG');
-      expect(result.modelYear).toBe(2010);
+      expect(result.modelYear).toBe(2003); // Position 10 is '3' -> 2003
       expect(result.region).toBe('North America');
       expect(result.country).toBe('United States');
     });
@@ -64,7 +64,7 @@ describe('OfflineVINDecoder', () => {
     });
 
     it('should return Unknown for non-existent WMI', () => {
-      expect(decoder.getManufacturer('XXX')).toBe('Unknown Manufacturer');
+      expect(decoder.getManufacturer('ZZZ')).toBe('Unknown Manufacturer');
     });
 
     it('should handle lowercase WMI', () => {
@@ -79,7 +79,7 @@ describe('OfflineVINDecoder', () => {
     });
 
     it('should return false for unknown manufacturers', () => {
-      expect(decoder.hasManufacturer('XXX')).toBe(false);
+      expect(decoder.hasManufacturer('ZZZ')).toBe(false);
     });
   });
 

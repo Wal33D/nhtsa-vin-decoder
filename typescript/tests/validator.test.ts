@@ -63,20 +63,20 @@ describe('VINValidator', () => {
 
   describe('getModelYear', () => {
     it('should decode model year correctly', () => {
-      // 2023 = P
-      expect(VINValidator.getModelYear('1HGCM82633P123456')).toBe(2023);
-      // 2019 = K
+      // 2023 = P at position 10
+      expect(VINValidator.getModelYear('1HGCM8263PA123456')).toBe(2023);
+      // 2019 = K at position 10
       expect(VINValidator.getModelYear('5J6RW2H89KA000000')).toBe(2019);
-      // 2010 = A
-      expect(VINValidator.getModelYear('1HGCM82633A123456')).toBe(2010);
+      // 2010 = A at position 10
+      expect(VINValidator.getModelYear('1HGCM8263AA123456')).toBe(2010);
     });
 
     it('should handle year codes A-Y and 1-9', () => {
       expect(VINValidator.decodeModelYear('A')).toBe(2010);
       expect(VINValidator.decodeModelYear('B')).toBe(2011);
-      expect(VINValidator.decodeModelYear('Y')).toBe(2030);
-      expect(VINValidator.decodeModelYear('1')).toBe(2031);
-      expect(VINValidator.decodeModelYear('9')).toBe(2039);
+      expect(VINValidator.decodeModelYear('Y')).toBe(2000); // First cycle year
+      expect(VINValidator.decodeModelYear('1')).toBe(2001); // First cycle year
+      expect(VINValidator.decodeModelYear('9')).toBe(2009); // First cycle year
     });
   });
 
