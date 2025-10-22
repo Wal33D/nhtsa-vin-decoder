@@ -27,9 +27,6 @@ jobs:
       - name: Build with Gradle
         run: gradle build --no-daemon
 
-      - name: Run Java tests
-        run: gradle test --no-daemon
-
       - name: Build Android library
         working-directory: android
         run: |
