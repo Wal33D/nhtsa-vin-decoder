@@ -1,0 +1,61 @@
+{
+  "name": "@wal33d/nhtsa-vin-decoder",
+  "version": "2.1.0",
+  "description": "Advanced VIN decoder with offline decoding and NHTSA vPIC API integration. Supports 2,015+ manufacturer codes with both JavaScript and TypeScript.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "example": "ts-node examples/example.ts",
+    "lint": "eslint src --ext .ts",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "keywords": [
+    "vin",
+    "vin-decoder",
+    "vehicle",
+    "nhtsa",
+    "vpic",
+    "automobile",
+    "car",
+    "decoder",
+    "wmi",
+    "typescript",
+    "javascript"
+  ],
+  "author": "Wal33D <aquataze@yahoo.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wal33D/nhtsa-vin-decoder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Wal33D/nhtsa-vin-decoder/issues"
+  },
+  "homepage": "https://github.com/Wal33D/nhtsa-vin-decoder#readme",
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
+}

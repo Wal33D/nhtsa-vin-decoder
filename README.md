@@ -5,6 +5,8 @@
 [![Java](https://img.shields.io/badge/Java-11+-orange.svg)](https://www.oracle.com/java/)
 [![Android](https://img.shields.io/badge/Android-API%2021+-green.svg)](https://developer.android.com/)
 [![Python](https://img.shields.io/badge/Python-3.6+-blue.svg)](https://www.python.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-14+-green.svg)](https://nodejs.org/)
 
 World-class VIN decoder with comprehensive offline database (2,015+ WMI codes) and NHTSA vPIC API integration
 
@@ -70,6 +72,24 @@ print(f"{year} {manufacturer}")
 # Output: 2003 Honda
 ```
 
+### TypeScript/JavaScript - Auto-Fallback (API → Offline)
+```typescript
+import { VINDecoder } from '@wal33d/nhtsa-vin-decoder';
+
+// Default: Tries NHTSA API first, falls back to offline WMI database
+const decoder = new VINDecoder();
+const vehicle = await decoder.decode('1HGCM82633A004352');
+console.log(`${vehicle.make} ${vehicle.model} ${vehicle.bodyClass}`);
+// Output: Honda Accord Sedan (from API)
+// Falls back to offline if API unavailable
+
+// Force offline-only mode
+const offlineDecoder = new VINDecoder({ online: false });
+const offlineData = await offlineDecoder.decode('1HGCM82633A004352');
+console.log(`${offlineData.modelYear} ${offlineData.manufacturer}`);
+// Output: 2003 Honda (from WMI database)
+```
+
 ## 🎯 Overview
 
 Advanced VIN decoder featuring both enhanced offline decoding capabilities and official NHTSA vPIC API integration. Provides complete vehicle specifications through manufacturer-specific decoders and a comprehensive WMI database with **2,015+ manufacturer codes**.
@@ -85,7 +105,7 @@ Advanced VIN decoder featuring both enhanced offline decoding capabilities and o
 - **Automatic Fallback** - Seamlessly switches between offline/online
 - **FREE** - No API key required
 - **Caching** - Built-in LRU cache to reduce API calls
-- **Multi-platform** - Java/Android and Python implementations
+- **Multi-platform** - Java, Android, Python, and TypeScript/JavaScript implementations
 
 ## 📁 Directory Structure
 
