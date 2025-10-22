@@ -19,36 +19,36 @@ public class JavaYearDecodingTest {
     @Test
     void digit1_pos7digit_is_2001() {
         String vin = withCharAt(withCharAt(baseVin(), 6, '1'), 9, '1');
-        assertEquals(2001, VINValidator.getModelYear(vin));
+        assertEquals(Integer.valueOf(2001), VINValidator.getModelYear(vin));
     }
 
     @Test
     void digit1_pos7letter_is_2031() {
         String vin = withCharAt(withCharAt(baseVin(), 6, 'A'), 9, '1');
-        assertEquals(2031, VINValidator.getModelYear(vin));
+        assertEquals(Integer.valueOf(2031), VINValidator.getModelYear(vin));
     }
 
     @Test
     void digit9_pos7digit_is_2009() {
         String vin = withCharAt(withCharAt(baseVin(), 6, '2'), 9, '9');
-        assertEquals(2009, VINValidator.getModelYear(vin));
+        assertEquals(Integer.valueOf(2009), VINValidator.getModelYear(vin));
     }
 
     @Test
     void digit9_pos7letter_is_2039() {
         String vin = withCharAt(withCharAt(baseVin(), 6, 'B'), 9, '9');
-        assertEquals(2039, VINValidator.getModelYear(vin));
+        assertEquals(Integer.valueOf(2039), VINValidator.getModelYear(vin));
     }
 
     @Test
     void letterA_pos7digit_is_1980() {
         String vin = withCharAt(withCharAt(baseVin(), 6, '3'), 9, 'A');
-        assertEquals(1980, VINValidator.getModelYear(vin));
+        assertEquals(Integer.valueOf(1980), VINValidator.getModelYear(vin));
     }
 
     @Test
     void letterY_pos7letter_is_2030() {
         String vin = withCharAt(withCharAt(baseVin(), 6, 'C'), 9, 'Y');
-        assertEquals(2030, VINValidator.getModelYear(vin));
+        assertEquals(Integer.valueOf(2030), VINValidator.getModelYear(vin));
     }
 }
