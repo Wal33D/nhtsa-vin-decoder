@@ -1,4 +1,4 @@
-import { VehicleData, WMIEntry } from './types';
+import { VehicleData } from './types';
 import { VINValidator } from './validator';
 import wmiDatabase from './wmi-database.json';
 
@@ -52,8 +52,7 @@ export class OfflineVINDecoder {
     data.region = VINValidator.getRegion(normalizedVin);
     data.country = VINValidator.getCountry(normalizedVin);
 
-    // Get plant code
-    const plantCode = VINValidator.getPlantCode(normalizedVin);
+    // Set plant country from country
     data.plantCountry = data.country;
 
     return data;
