@@ -37,8 +37,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 }
 
-// Tests temporarily disabled - requires investigation of build issues
-// test {
-//     useJUnitPlatform()
-// }
+test {
+    useJUnitPlatform()
+}
 
