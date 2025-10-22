@@ -12,7 +12,7 @@ import urllib.request
 import urllib.error
 import urllib.parse
 import json
-from typing import Dict, Optional, Callable
+from typing import Dict, Optional, Callable, List
 from dataclasses import dataclass
 from functools import lru_cache
 
