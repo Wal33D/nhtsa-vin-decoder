@@ -12,8 +12,8 @@ import urllib.request
 import urllib.error
 import urllib.parse
 import json
-from typing import Dict, Optional, Callable, List, Tuple, Any
-from dataclasses import dataclass, replace
+from typing import Dict, Optional, Callable
+from dataclasses import dataclass
 from functools import lru_cache
 
 # Import WMI database for offline fallback
@@ -22,29 +22,6 @@ try:
     wmi_available = True
 except ImportError:
     wmi_available = False
-
-
-@dataclass
-class RecallRecord:
-    """Single NHTSA recall campaign entry"""
-
-    manufacturer: Optional[str] = None
-    nhtsa_campaign_number: Optional[str] = None
-    nhtsa_action_number: Optional[str] = None
-    report_received_date: Optional[str] = None
-    component: Optional[str] = None
-    summary: Optional[str] = None
-    consequence: Optional[str] = None
-    remedy: Optional[str] = None
-    notes: Optional[str] = None
-    model_year: Optional[str] = None
-    make: Optional[str] = None
-    model: Optional[str] = None
-    mfr_recall_number: Optional[str] = None
-    over_the_air_update: Optional[bool] = None
-    park_it: Optional[bool] = None
-    park_outside: Optional[bool] = None
-    additional_fields: Dict[str, Any] = None
 
 
 @dataclass
@@ -73,7 +50,6 @@ class VehicleData:
     plant_country: Optional[str] = None
     error_text: Optional[str] = None
     raw_data: Dict = None
-    recalls: Optional[List[RecallRecord]] = None
 
     def is_valid(self) -> bool:
         """Check if vehicle data is valid"""
@@ -106,7 +82,6 @@ class NHTSAVinDecoder:
     """
 
     BASE_URL = "https://vpic.nhtsa.dot.gov/api/vehicles"
-    RECALLS_BASE_URL = "https://api.nhtsa.gov/recalls"
 
     def __init__(self):
         """Initialize decoder"""
@@ -343,91 +318,9 @@ class NHTSAVinDecoder:
 
         return {}
 
-    @lru_cache(maxsize=128)
-    def get_recalls_for_vehicle(self, make: str, model: str,
-                                model_year: Optional[str] = None) -> List[RecallRecord]:
-        """Fetch recall campaigns for a vehicle definition.
-
-        Args:
-            make: Vehicle make (e.g., "Honda")
-            model: Vehicle model (e.g., "Accord")
-            model_year: Optional model year (string or int)
-
-        Returns:
-            List of RecallRecord instances.
-        """
-        normalized_make = self._clean_value(make)
-        normalized_model = self._clean_value(model)
-        if not normalized_make or not normalized_model:
-            return []
-
-        params = {
-            "make": normalized_make,
-            "model": normalized_model,
-        }
-        if model_year:
-            params["modelYear"] = str(model_year)
-
-        query_string = urllib.parse.urlencode(params)
-        url = f"{self.RECALLS_BASE_URL}/recallsByVehicle?{query_string}"
-
-        try:
-            with urllib.request.urlopen(url, timeout=10) as response:
-                data = json.loads(response.read().decode("utf-8"))
-        except (urllib.error.URLError, json.JSONDecodeError, Exception):
-            return []
-
-        results = data.get("results") or data.get("Results") or []
-        recalls: List[RecallRecord] = []
-
-        for entry in results:
-            recalls.append(
-                RecallRecord(
-                    manufacturer=self._clean_value(entry.get("Manufacturer")),
-                    nhtsa_campaign_number=self._clean_value(entry.get("NHTSACampaignNumber")
-                                                            or entry.get("nhtsaCampaignNumber")),
-                    nhtsa_action_number=self._clean_value(entry.get("NHTSAActionNumber")),
-                    report_received_date=self._clean_value(entry.get("ReportReceivedDate")
-                                                          or entry.get("reportReceivedDate")),
-                    component=self._clean_value(entry.get("Component")),
-                    summary=self._clean_value(entry.get("Summary")),
-                    consequence=self._clean_value(entry.get("Consequence")),
-                    remedy=self._clean_value(entry.get("Remedy")),
-                    notes=self._clean_value(entry.get("Notes")),
-                    model_year=self._clean_value(entry.get("ModelYear") or entry.get("modelYear")),
-                    make=self._clean_value(entry.get("Make") or entry.get("make")),
-                    model=self._clean_value(entry.get("Model") or entry.get("model")),
-                    mfr_recall_number=self._clean_value(entry.get("mfrRecallNumber")
-                                                        or entry.get("MfrRecallNumber")),
-                    over_the_air_update=self._parse_bool(entry.get("overTheAirUpdate")
-                                                          or entry.get("overTheAirUpdateYn")),
-                    park_it=self._parse_bool(entry.get("parkIt")),
-                    park_outside=self._parse_bool(entry.get("parkOutSide")
-                                                  or entry.get("parkOutside")
-                                                  or entry.get("parkOutsideYn")),
-                    additional_fields=entry,
-                )
-            )
-
-        return recalls
-
-    def get_recalls_by_vin(self, vin: str, model_year: Optional[str] = None) -> Tuple[VehicleData, List[RecallRecord]]:
-        """Decode a VIN and enrich the result with recall information."""
-
-        vehicle = self.decode(vin, model_year)
-
-        recall_year = model_year or (str(vehicle.year) if vehicle.year else None)
-        recalls: List[RecallRecord] = []
-        if vehicle.make and vehicle.model:
-            recalls = self.get_recalls_for_vehicle(vehicle.make, vehicle.model, recall_year)
-
-        vehicle_with_recalls = replace(vehicle, recalls=recalls if recalls else None)
-        return vehicle_with_recalls, recalls
-
     def clear_cache(self):
-        """Clear cached VIN and recall lookups"""
+        """Clear cached VIN lookups"""
         self.decode.cache_clear()
-        self.get_recalls_for_vehicle.cache_clear()
 
     @staticmethod
     def _clean_value(value: any) -> Optional[str]:
@@ -463,26 +356,6 @@ class NHTSAVinDecoder:
                 return float(cleaned)
         except (ValueError, TypeError):
             pass
-        return None
-
-    @staticmethod
-    def _parse_bool(value: Any) -> Optional[bool]:
-        """Parse boolean values from API response"""
-        if value is None:
-            return None
-        if isinstance(value, bool):
-            return value
-        if isinstance(value, (int, float)):
-            if value == 1:
-                return True
-            if value == 0:
-                return False
-        if isinstance(value, str):
-            lowered = value.strip().lower()
-            if lowered in {"y", "yes", "true", "t", "1"}:
-                return True
-            if lowered in {"n", "no", "false", "f", "0"}:
-                return False
         return None
 
 

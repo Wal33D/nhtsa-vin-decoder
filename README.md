@@ -70,92 +70,6 @@ print(f"{year} {manufacturer}")
 # Output: 2003 Honda
 ```
 
-### Python - VIN Recall Lookup
-```python
-from python.nhtsa_vin_decoder import NHTSAVinDecoder
-
-decoder = NHTSAVinDecoder()
-vehicle, recalls = decoder.get_recalls_by_vin("5J6RW2H89KA000000")
-
-print(vehicle.get_display_name())
-for recall in recalls:
-    print(f"{recall.nhtsa_campaign_number}: {recall.summary}")
-```
-
-### Java - VIN Recall Lookup (New!)
-```java
-import io.github.vindecoder.nhtsa.*;
-
-VINDecoderService decoder = VINDecoderService.getInstance();
-
-// Decode VIN and get recalls
-decoder.getRecallsByVin("5J6RW2H89KA000000", new VINDecoderCallback() {
-    @Override
-    public void onSuccess(VehicleData vehicle) {
-        System.out.println(vehicle.getDisplayName());
-        if (vehicle.hasRecalls()) {
-            for (RecallRecord recall : vehicle.getRecalls()) {
-                System.out.println(recall.getNhtsaCampaignNumber() + ": " + recall.getSummary());
-            }
-        }
-    }
-
-    @Override
-    public void onError(String error) {
-        System.err.println("Error: " + error);
-    }
-});
-
-// Or get recalls by make/model/year
-decoder.getRecallsForVehicle("Honda", "CR-V", "2019", new RecallCallback() {
-    @Override
-    public void onSuccess(List<RecallRecord> recalls) {
-        System.out.println("Found " + recalls.size() + " recalls");
-    }
-
-    @Override
-    public void onError(String error) {
-        System.err.println("Error: " + error);
-    }
-});
-```
-
-### Android - VIN Recall Lookup (New!)
-```java
-VINDecoderAndroid decoder = new VINDecoderAndroid(context);
-
-// Decode VIN with recalls - runs on main thread
-decoder.decodeWithRecalls("5J6RW2H89KA000000", new DecodeCallback() {
-    @Override
-    public void onSuccess(VehicleData vehicle) {
-        // Safe to update UI
-        textView.setText(vehicle.getDisplayName());
-        if (vehicle.hasRecalls()) {
-            recallCountView.setText("⚠ " + vehicle.getRecallCount() + " recalls");
-        }
-    }
-
-    @Override
-    public void onError(String error) {
-        Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
-    }
-});
-
-// Or get recalls by make/model
-decoder.getRecallsForVehicle("Honda", "CR-V", "2019", new RecallCallback() {
-    @Override
-    public void onSuccess(List<RecallRecord> recalls) {
-        // Update UI with recall list
-        updateRecallsList(recalls);
-    }
-
-    @Override
-    public void onError(String error) {
-        Log.e("Recalls", error);
-    }
-});
-```
-
 ## 🎯 Overview
 
 Advanced VIN decoder featuring both enhanced offline decoding capabilities and official NHTSA vPIC API integration. Provides complete vehicle specifications through manufacturer-specific decoders and a comprehensive WMI database with **2,015+ manufacturer codes**.
@@ -168,7 +82,6 @@ Advanced VIN decoder featuring both enhanced offline decoding capabilities and o
 - **VIN Validation** - Check digit verification per ISO 3779
 - **Year Decoding** - Accurate model year extraction (1980-2039)
 - **Official NHTSA API** - Falls back to government database when online
-- **Recall Lookup** - Pull active NHTSA campaigns by VIN, make/model/year (All platforms)
 - **Automatic Fallback** - Seamlessly switches between offline/online
 - **FREE** - No API key required
 - **Caching** - Built-in LRU cache to reduce API calls
@@ -185,12 +98,9 @@ nhtsa-vin-decoder/
 │   │   ├── WMIDatabase.java        # 948+ manufacturer codes
 │   │   └── MercedesBenzDecoder.java # Example manufacturer decoder
 │   └── nhtsa/                      # NHTSA API integration
-│       ├── VINDecoderService.java  # Main service with recall support
-│       ├── VehicleData.java        # Vehicle data with recall field
-│       ├── NHTSAApiService.java    # VIN API interface
-│       ├── RecallRecord.java       # Recall campaign data model (NEW)
-│       ├── RecallResponse.java     # Recall API response wrapper (NEW)
-│       └── NHTSARecallApiService.java # Recall API interface (NEW)
+│       ├── VINDecoderService.java
+│       ├── VehicleData.java
+│       └── NHTSAApiService.java
 ├── android/                        # Android wrapper library
 │   └── nhtsa-vin-decoder-android/
 │       └── src/main/java/io/github/vindecoder/android/
@@ -241,7 +151,10 @@ nhtsa-vin-decoder/
 ```
 
 ### Online Mode (Full NHTSA Data)
-All of the above PLUS safety ratings, recalls, NCAP data, and more.
+All of the above PLUS safety ratings, NCAP data, and more.
+
+### Looking for Recall Data?
+For vehicle recall information, check out our sister project: [NHTSA Recall Lookup](https://github.com/Wal33D/nhtsa-recall-lookup)
 
 ## 💻 Quick Start
 
@@ -411,7 +324,6 @@ Easily extensible for:
 | **Check Digit** | ✓ Full validation | ✓ | ✗ |
 | **Region/Country** | ✓ All | ✓ All | ✓ Basic |
 | **Safety Data** | ✗ | ✓ NCAP ratings | ✗ |
-| **Recall Data** | ✗ | ✓ | ✗ |
 | **Works Offline** | ✓ Always | ✗ Needs internet | ✓ |
 | **Speed** | <1ms | 200-500ms | <1ms |
 | **Free** | ✓ | ✓ | ✓ |
@@ -419,12 +331,6 @@ Easily extensible for:
 *Can be extended to other manufacturers by adding decoders (see [ADDING_DECODERS.md](docs/ADDING_DECODERS.md))
 
 ## 📈 Recent Improvements
-
-### Version 2.1 (October 2025)
-- **Recall Lookup for Java/Android**: Added NHTSA recall campaign lookup to Java and Android implementations
-- **RecallRecord Class**: Comprehensive recall data model with safety flags
-- **Async Recall Methods**: Android-optimized recall lookups with main thread callbacks
-- **Recall Caching**: Built-in cache for recall API responses
 
 ### Version 2.0 (October 2025)
 - **6x More Coverage**: Increased from 311 to 2,015+ WMI codes
@@ -572,7 +478,7 @@ Speedup:       642x faster
 
 **Use Online Mode When:**
 - Need complete vehicle specifications
-- Want safety ratings and recall data
+- Want safety ratings and additional data
 - Require NCAP test results
 - Need detailed engine/transmission specs
 - Accuracy is more important than speed

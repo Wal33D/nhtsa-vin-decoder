@@ -197,9 +197,6 @@ public class VehicleData {
     @SerializedName("SuggestedVIN")
     public String suggestedVIN;
 
-    // Recall Information (added)
-    private transient List<RecallRecord> recalls;
-
     /**
      * Result class for API response
      */
@@ -362,24 +359,4 @@ public class VehicleData {
     public void setTrim(String trim) { this.trim = trim; }
     public void setGvwr(String gvwr) { this.gvwr = gvwr; }
     public void setCurbWeight(String curbWeight) { this.curbWeight = curbWeight; }
-
-    // Recall Information methods
-    public List<RecallRecord> getRecalls() { return recalls; }
-    public void setRecalls(List<RecallRecord> recalls) { this.recalls = recalls; }
-
-    /**
-     * Check if vehicle has any recalls
-     * @return true if recalls list is not null and not empty
-     */
-    public boolean hasRecalls() {
-        return recalls != null && !recalls.isEmpty();
-    }
-
-    /**
-     * Count the number of recalls
-     * @return number of recalls, or 0 if none
-     */
-    public int getRecallCount() {
-        return recalls != null ? recalls.size() : 0;
-    }
 }

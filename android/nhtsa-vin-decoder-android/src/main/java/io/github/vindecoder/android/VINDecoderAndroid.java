@@ -5,11 +5,8 @@ import android.os.Handler;
 import android.os.Looper;
 
 import io.github.vindecoder.nhtsa.VehicleData;
-import io.github.vindecoder.nhtsa.VINDecoderService;
-import io.github.vindecoder.nhtsa.RecallRecord;
 import io.github.vindecoder.offline.OfflineVINDecoder;
 
-import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -44,7 +41,6 @@ public class VINDecoderAndroid {
 
     private final Context context;
     private final OfflineVINDecoder offlineDecoder;
-    private final VINDecoderService onlineDecoder;
     private final Executor executor;
     private final Handler mainHandler;
 
@@ -70,7 +66,6 @@ public class VINDecoderAndroid {
     public VINDecoderAndroid(Context context) {
         this.context = context.getApplicationContext();
         this.offlineDecoder = new OfflineVINDecoder();
-        this.onlineDecoder = VINDecoderService.getInstance();
         this.executor = Executors.newFixedThreadPool(4);
         this.mainHandler = new Handler(Looper.getMainLooper());
     }
@@ -237,105 +232,5 @@ public class VINDecoderAndroid {
      */
     public interface YearCallback {
         void onYearResult(Integer year);
-    }
-
-    // ============ RECALL FUNCTIONALITY (NEW) ============
-
-    /**
-     * Callback interface for recall lookups
-     */
-    public interface RecallCallback {
-        /**
-         * Called on success with recall data (runs on main thread)
-         */
-        void onSuccess(List<RecallRecord> recalls);
-
-        /**
-         * Called on error with error message (runs on main thread)
-         */
-        void onError(String error);
-    }
-
-    /**
-     * Gets recall campaigns for a specific vehicle
-     *
-     * @param make Vehicle make (e.g., "Honda")
-     * @param model Vehicle model (e.g., "Accord")
-     * @param modelYear Optional model year (can be null for all years)
-     * @param callback Callback for result (called on main thread)
-     */
-    public void getRecallsForVehicle(String make, String model, String modelYear, RecallCallback callback) {
-        onlineDecoder.getRecallsForVehicle(make, model, modelYear,
-            new VINDecoderService.RecallCallback() {
-                @Override
-                public void onSuccess(List<RecallRecord> recalls) {
-                    mainHandler.post(() -> callback.onSuccess(recalls));
-                }
-
-                @Override
-                public void onError(String error) {
-                    mainHandler.post(() -> callback.onError(error));
-                }
-            });
-    }
-
-    /**
-     * Gets recall campaigns for a specific vehicle (all years)
-     *
-     * @param make Vehicle make
-     * @param model Vehicle model
-     * @param callback Callback for result (called on main thread)
-     */
-    public void getRecallsForVehicle(String make, String model, RecallCallback callback) {
-        getRecallsForVehicle(make, model, null, callback);
-    }
-
-    /**
-     * Decodes a VIN and enriches it with recall information
-     *
-     * @param vin The Vehicle Identification Number
-     * @param callback Callback for result with recalls included (called on main thread)
-     */
-    public void decodeWithRecalls(String vin, DecodeCallback callback) {
-        onlineDecoder.getRecallsByVin(vin,
-            new VINDecoderService.VINDecoderCallback() {
-                @Override
-                public void onSuccess(VehicleData vehicleData) {
-                    mainHandler.post(() -> callback.onSuccess(vehicleData));
-                }
-
-                @Override
-                public void onError(String error) {
-                    mainHandler.post(() -> callback.onError(error));
-                }
-            });
-    }
-
-    /**
-     * Decodes a VIN using the NHTSA API (requires internet)
-     *
-     * @param vin The Vehicle Identification Number
-     * @param callback Callback for result (called on main thread)
-     */
-    public void decodeOnline(String vin, DecodeCallback callback) {
-        onlineDecoder.decodeVIN(vin,
-            new VINDecoderService.VINDecoderCallback() {
-                @Override
-                public void onSuccess(VehicleData vehicleData) {
-                    mainHandler.post(() -> callback.onSuccess(vehicleData));
-                }
-
-                @Override
-                public void onError(String error) {
-                    mainHandler.post(() -> callback.onError(error));
-                }
-            });
-    }
-
-    /**
-     * Clears the cache for both VIN and recall data
-     */
-    public void clearCache() {
-        onlineDecoder.clearCache();
     }
 }

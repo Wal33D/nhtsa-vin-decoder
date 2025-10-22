@@ -53,7 +53,7 @@ results = decoder.decode_batch(vins)
 
 # Process results
 for vin, data in results.items():
-    if data.error_code:
+    if data.error_text:
         print(f"{vin}: Error - {data.error_text}")
     else:
         print(f"{vin}: {data.year} {data.make} {data.model}")
@@ -68,7 +68,7 @@ import time
 
 def handle_result(vehicle_data):
     """Callback function for async decode"""
-    if vehicle_data.error_code:
+    if vehicle_data.error_text:
         print(f"Error: {vehicle_data.error_text}")
     else:
         print(f"Decoded: {vehicle_data.year} {vehicle_data.make} {vehicle_data.model}")
@@ -86,39 +86,62 @@ time.sleep(2)  # Wait for completion
 Proper error handling for production use:
 
 ```python
+from dataclasses import asdict
+
+
 def safe_decode(vin):
     """Safely decode a VIN with comprehensive error handling"""
     try:
         result = decoder.decode(vin)
 
-        if result.error_code:
+        if result.error_text:
             # Handle NHTSA API errors
-            if 'WMI fallback' in result.error_text:
+            if result.raw_data and result.raw_data.get('source') == 'WMI_FALLBACK':
                 print(f"Using offline data for {vin}")
                 return {
                     'status': 'partial',
                     'manufacturer': result.manufacturer,
                     'year': result.year,
-                    'country': result.plant_country
+                    'country': result.plant_country,
+                    'message': result.error_text,
                 }
-            else:
-                print(f"Decode failed: {result.error_text}")
-                return {'status': 'error', 'message': result.error_text}
-        else:
-            # Success - full data available
-            return {
-                'status': 'success',
-                'vehicle': f"{result.year} {result.make} {result.model}",
-                'details': result.to_dict()
-            }
 
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-        return {'status': 'error', 'message': str(e)}
+            print(f"Decode failed: {result.error_text}")
+            return {'status': 'error', 'message': result.error_text}
+
+        # Success - full data available
+        return {
+            'status': 'success',
+            'vehicle': result.get_display_name(),
+            'details': asdict(result),
+        }
+
+    except Exception as exc:
+        print(f"Unexpected error: {exc}")
+        return {'status': 'error', 'message': str(exc)}
+
 
 # Use the safe decoder
 result = safe_decode('1HGCM82633A004352')
 print(result['status'])
+```
+
+### Recall Lookup
+
+Decode a VIN and fetch associated recall campaigns in a single call:
+
+```python
+vehicle, recalls = decoder.get_recalls_by_vin('5J6RW2H89KA000000')
+
+if vehicle.error_text:
+    print(f"Decode error: {vehicle.error_text}")
+else:
+    print(vehicle.get_display_name())
+    if recalls:
+        for recall in recalls:
+            print(f"- {recall.nhtsa_campaign_number}: {recall.summary}")
+    else:
+        print("No recalls found")
 ```
 
 ## Common Use Cases
@@ -126,12 +149,15 @@ print(result['status'])
 ### 1. Vehicle Registration System
 
 ```python
+from datetime import datetime
+
+
 def register_vehicle(vin, owner_name):
     """Register a vehicle with decoded information"""
     # Decode VIN
     vehicle = decoder.decode(vin)
 
-    if vehicle.error_code:
+    if vehicle.error_text:
         # Try offline decode as fallback
         vehicle = decoder.decode_offline(vin)
         if not vehicle.manufacturer:
@@ -157,6 +183,9 @@ def register_vehicle(vin, owner_name):
 ### 2. Insurance Quote System
 
 ```python
+from datetime import datetime
+
+
 def get_insurance_quote(vin):
     """Generate insurance quote based on vehicle details"""
     vehicle = decoder.decode(vin)
@@ -206,8 +235,8 @@ def analyze_fleet(vin_list):
     }
 
     for vin, vehicle in fleet_data.items():
-        if vehicle.error_code:
-            stats['errors'].append(vin)
+        if vehicle.error_text:
+            stats['errors'].append({'vin': vin, 'error': vehicle.error_text})
             continue
 
         # Count by manufacturer
@@ -228,6 +257,9 @@ def analyze_fleet(vin_list):
 ### 4. VIN Validation
 
 ```python
+from dataclasses import asdict
+
+
 def validate_vin(vin):
     """Validate a VIN and return detailed information"""
     # Basic format check
@@ -235,30 +267,30 @@ def validate_vin(vin):
         return {'valid': False, 'reason': 'VIN must be 17 characters'}
 
     # Check for invalid characters
-    if 'I' in vin or 'O' in vin or 'Q' in vin:
+    if any(ch in vin for ch in ('I', 'O', 'Q')):
         return {'valid': False, 'reason': 'VIN contains invalid characters (I, O, or Q)'}
 
     # Try to decode
     result = decoder.decode(vin)
 
-    if result.error_code and result.error_code != '0':
+    if result.error_text:
         # Try offline validation
         offline = decoder.decode_offline(vin)
-        if offline.manufacturer and offline.manufacturer != 'Unknown':
+        if offline.manufacturer:
             return {
                 'valid': True,
                 'confidence': 'medium',
                 'manufacturer': offline.manufacturer,
-                'year': offline.year
+                'year': offline.year,
+                'message': result.error_text,
             }
-        else:
-            return {'valid': False, 'reason': result.error_text}
+        return {'valid': False, 'reason': result.error_text}
 
     return {
         'valid': True,
         'confidence': 'high',
-        'vehicle': f"{result.year} {result.make} {result.model}",
-        'details': result.to_dict()
+        'vehicle': result.get_display_name(),
+        'details': asdict(result),
     }
 ```
 
@@ -332,10 +364,13 @@ class Vehicle(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 # views.py
+from dataclasses import asdict
+
 from django.http import JsonResponse
 from python.nhtsa_vin_decoder import NHTSAVinDecoder
 
 decoder = NHTSAVinDecoder()
+
 
 def decode_vin(request):
     vin = request.GET.get('vin')
@@ -351,22 +386,26 @@ def decode_vin(request):
 
     # Decode and save
     result = decoder.decode(vin)
-    if not result.error_code:
+    payload = asdict(result)
+
+    if not result.error_text:
         vehicle = Vehicle.objects.create(
             vin=vin,
             make=result.make,
             model=result.model,
             year=result.year,
             manufacturer=result.manufacturer,
-            decoded_data=result.to_dict()
+            decoded_data=payload,
         )
 
-    return JsonResponse(result.to_dict())
+    return JsonResponse(payload)
 ```
 
 ### Flask Integration
 
 ```python
+from dataclasses import asdict
+
 from flask import Flask, jsonify, request
 from python.nhtsa_vin_decoder import NHTSAVinDecoder
 
@@ -378,7 +417,7 @@ def decode_vin(vin):
     """API endpoint for VIN decoding"""
     try:
         result = decoder.decode(vin)
-        return jsonify(result.to_dict())
+        return jsonify(asdict(result))
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

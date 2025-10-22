@@ -5,7 +5,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,16 +24,12 @@ public class VINDecoderService {
 
     private static final String TAG = "VINDecoder";
     private static final String BASE_URL = "https://vpic.nhtsa.dot.gov/api/";
-    private static final String RECALLS_BASE_URL = "https://api.nhtsa.gov/recalls/";
 
     private static VINDecoderService instance;
     private final NHTSAApiService apiService;
-    private final NHTSARecallApiService recallApiService;
 
     // Cache for decoded VINs to reduce API calls
     private final Map<String, VehicleData> cache = new HashMap<>();
-    // Cache for recall data
-    private final Map<String, List<RecallRecord>> recallCache = new HashMap<>();
 
     /**
      * Callback interface for VIN decoding results
@@ -54,41 +49,15 @@ public class VINDecoderService {
     }
 
     /**
-     * Callback interface for recall lookup results
-     */
-    public interface RecallCallback {
-        /**
-         * Called when recall lookup is successful
-         * @param recalls List of recall records
-         */
-        void onSuccess(List<RecallRecord> recalls);
-
-        /**
-         * Called when recall lookup fails
-         * @param error Error message
-         */
-        void onError(String error);
-    }
-
-    /**
      * Private constructor for singleton pattern
      */
     private VINDecoderService() {
-        // Create Retrofit instance for VIN API
-        Retrofit vinRetrofit = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        apiService = vinRetrofit.create(NHTSAApiService.class);
-
-        // Create Retrofit instance for Recall API
-        Retrofit recallRetrofit = new Retrofit.Builder()
-                .baseUrl(RECALLS_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        recallApiService = recallRetrofit.create(NHTSARecallApiService.class);
+        apiService = retrofit.create(NHTSAApiService.class);
     }
 
     /**
@@ -249,8 +218,7 @@ public class VINDecoderService {
      */
     public void clearCache() {
         cache.clear();
-        recallCache.clear();
-        System.out.println(TAG + ": VIN and recall cache cleared");
+        System.out.println(TAG + ": VIN cache cleared");
     }
 
     /**
@@ -272,128 +240,5 @@ public class VINDecoderService {
     public VehicleData getCached(String vin) {
         if (vin == null) return null;
         return cache.get(vin.trim().toUpperCase());
-    }
-
-    /**
-     * Get recall campaigns for a vehicle by make, model, and optional year
-     *
-     * @param make Vehicle make (e.g., "Honda")
-     * @param model Vehicle model (e.g., "Accord")
-     * @param modelYear Optional model year
-     * @param callback Callback for results
-     */
-    public void getRecallsForVehicle(String make, String model, String modelYear, RecallCallback callback) {
-        if (make == null || make.trim().isEmpty() || model == null || model.trim().isEmpty()) {
-            callback.onError("Make and model are required");
-            return;
-        }
-
-        final String normalizedMake = make.trim();
-        final String normalizedModel = model.trim();
-        final String cacheKey = normalizedMake + "_" + normalizedModel + "_" + (modelYear != null ? modelYear : "ALL");
-
-        // Check cache first
-        if (recallCache.containsKey(cacheKey)) {
-            List<RecallRecord> cached = recallCache.get(cacheKey);
-            if (cached != null) {
-                System.out.println(TAG + ": Returning cached recall data for: " + cacheKey);
-                callback.onSuccess(cached);
-                return;
-            }
-        }
-
-        // Make API call
-        System.out.println(TAG + ": Fetching recalls for: " + normalizedMake + " " + normalizedModel + " " + modelYear);
-        Call<RecallResponse> call;
-        if (modelYear != null && !modelYear.trim().isEmpty()) {
-            call = recallApiService.getRecallsByVehicle(normalizedMake, normalizedModel, modelYear);
-        } else {
-            call = recallApiService.getRecallsByVehicle(normalizedMake, normalizedModel);
-        }
-
-        call.enqueue(new Callback<RecallResponse>() {
-            @Override
-            public void onResponse(Call<RecallResponse> call, Response<RecallResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    RecallResponse recallResponse = response.body();
-                    List<RecallRecord> recalls = recallResponse.getResults();
-
-                    if (recalls != null) {
-                        // Cache the result
-                        recallCache.put(cacheKey, recalls);
-
-                        System.out.println(TAG + ": Found " + recalls.size() + " recalls");
-                        callback.onSuccess(recalls);
-                    } else {
-                        System.out.println(TAG + ": No recalls found");
-                        callback.onSuccess(new java.util.ArrayList<>());
-                    }
-                } else {
-                    System.err.println(TAG + ": Recall API call unsuccessful: " + response.code());
-                    callback.onError("Failed to fetch recalls. HTTP " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<RecallResponse> call, Throwable t) {
-                System.err.println(TAG + ": Recall API call failed: " + t.getMessage());
-                callback.onError("Network error: " + t.getMessage());
-            }
-        });
-    }
-
-    /**
-     * Decode a VIN and enrich with recall information
-     *
-     * @param vin The VIN to decode
-     * @param callback Callback for results with recalls included
-     */
-    public void getRecallsByVin(String vin, final VINDecoderCallback callback) {
-        // First decode the VIN
-        decodeVIN(vin, new VINDecoderCallback() {
-            @Override
-            public void onSuccess(final VehicleData vehicleData) {
-                // Then get recalls if we have make and model
-                if (vehicleData.getMake() != null && vehicleData.getModel() != null) {
-                    getRecallsForVehicle(vehicleData.getMake(), vehicleData.getModel(),
-                            vehicleData.getModelYear(), new RecallCallback() {
-                        @Override
-                        public void onSuccess(List<RecallRecord> recalls) {
-                            // Add recalls to vehicle data
-                            vehicleData.setRecalls(recalls);
-                            System.out.println(TAG + ": VIN decoded with " + recalls.size() + " recalls");
-                            callback.onSuccess(vehicleData);
-                        }
-
-                        @Override
-                        public void onError(String error) {
-                            // Return vehicle data without recalls on error
-                            System.err.println(TAG + ": Failed to get recalls: " + error);
-                            callback.onSuccess(vehicleData);
-                        }
-                    });
-                } else {
-                    // No make/model to look up recalls
-                    System.out.println(TAG + ": No make/model for recall lookup");
-                    callback.onSuccess(vehicleData);
-                }
-            }
-
-            @Override
-            public void onError(String error) {
-                callback.onError(error);
-            }
-        });
-    }
-
-    /**
-     * Get recall campaigns for a vehicle by make and model (all years)
-     *
-     * @param make Vehicle make
-     * @param model Vehicle model
-     * @param callback Callback for results
-     */
-    public void getRecallsForVehicle(String make, String model, RecallCallback callback) {
-        getRecallsForVehicle(make, model, null, callback);
     }
 }
