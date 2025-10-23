@@ -10,9 +10,6 @@
 
 World-class VIN decoder with comprehensive offline database (2,015+ WMI codes) and NHTSA vPIC API integration
 
-**Author**: Wal33D
-**Email**: aquataze@yahoo.com
-
 ## ⚡ Quick Start
 
 ### Java - Offline Mode (No Internet Required)
