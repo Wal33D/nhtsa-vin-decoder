@@ -6,7 +6,7 @@
 
     <groupId>io.github.wal33d</groupId>
     <artifactId>nhtsa-vin-decoder</artifactId>
-    <version>0.1.0</version>
+    <version>2.1.0</version>
     <packaging>jar</packaging>
 
     <name>NHTSA VIN Decoder</name>

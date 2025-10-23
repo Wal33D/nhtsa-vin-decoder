@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nhtsa-vin-decoder"
-version = "0.1.0"
+version = "2.1.0"
 description = "World-class VIN decoder with comprehensive offline database (2,015+ WMI codes) and NHTSA vPIC API integration"
 readme = "README.md"
 authors = [

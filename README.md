@@ -10,6 +10,16 @@
 
 World-class VIN decoder with comprehensive offline database (2,015+ WMI codes) and NHTSA vPIC API integration
 
+## Sister Projects
+
+Part of the NHTSA automotive diagnostic toolkit:
+
+- **[nhtsa-vin-decoder](https://github.com/Wal33D/nhtsa-vin-decoder)** - This project (VIN decoder)
+- **[nhtsa-recall-lookup](https://github.com/Wal33D/nhtsa-recall-lookup)** - Look up safety recalls using decoded vehicle info
+- **[dtc-database](https://github.com/Wal33D/dtc-database)** - Comprehensive OBD-II diagnostic trouble code database
+
+**Workflow:** Decode VIN → Get vehicle info → Look up recalls → Decode diagnostic codes
+
 ## ⚡ Quick Start
 
 ### Java - Offline Mode (No Internet Required)
